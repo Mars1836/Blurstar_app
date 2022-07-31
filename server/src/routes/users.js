@@ -1,0 +1,12 @@
+import express from "express";
+import userController from "../controller/users.js";
+import cloudinary from "../database/cloudinary.js";
+const userRouter = express.Router();
+userRouter.get("/", userController.findAll);
+userRouter.post("/", userController.create);
+userRouter.get("/userslike/:postid", userController.getUsersLike);
+userRouter.get("/find/:id", userController.findById);
+userRouter.get("/except/:id", userController.findExceptId);
+userRouter.delete("/:id"), userRouter.put("/:id");
+userRouter.post("/uploadavatar/:userid", userController.uploadAvatar);
+export default userRouter;
