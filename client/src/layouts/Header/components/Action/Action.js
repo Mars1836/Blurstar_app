@@ -10,6 +10,7 @@ import PostSite from "../../../../components/Model/components/PostSite";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../../services/RequireAuth";
 import Avatar from "../../../../components/Avatar";
+import socket from "../../../../SocketIO/socket";
 const cx = classNames.bind(styles);
 const Action = () => {
   const cookies = new Cookies();
@@ -21,6 +22,7 @@ const Action = () => {
       icon: iconHeader.home,
       action: () => {
         console.log("home");
+        socket.emit("click");
       },
       props: {
         to: "/",

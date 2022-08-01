@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import "dotenv/config";
 import { v2 as cloudinary } from "cloudinary";
+import http from "http";
+import { Server } from "socket.io";
 //api
 import groupRouter from "./routes/groups.js";
 import messageRouter from "./routes/messages.js";
@@ -13,6 +15,7 @@ import imageRouter from "./routes/images.js";
 import conn from "./database/mongoose_connect.js";
 
 const app = express();
+const server = http.createServer(app);
 const PORT = process.env.PORT || 4000;
 const corsOption = {
   origin: "http://localhost:3000",
@@ -28,6 +31,19 @@ app.use("/api/posts", postRouter);
 app.use("/api/users", userRouter);
 app.use("/api/messagses", messageRouter);
 app.use("/auth", authRouter);
-app.listen(PORT, () => {
+
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("a user connected");
+  socket.on("click", () => {
+    io.sockets.emit("sv-click");
+  });
+});
+server.listen(PORT, () => {
   console.log("server is running");
 });

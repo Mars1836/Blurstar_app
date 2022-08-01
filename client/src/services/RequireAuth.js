@@ -1,6 +1,7 @@
 import { Navigate, useNavigate } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import socket from "../SocketIO/socket";
 import userRequest from "../httprequest/user";
 import { createContext } from "react";
 const UserContext = createContext(null);
@@ -19,6 +20,10 @@ function RequireAuth({ children }) {
       .then(({ user }) => {
         userRequest.findById(user._id).then(({ data }) => {
           setUser(data);
+          console.log(1);
+          socket.on("sv-click", () => {
+            console.log("connected");
+          });
         });
       })
       .catch((err) => {
@@ -28,6 +33,7 @@ function RequireAuth({ children }) {
         setLoading(false);
       });
   }, [reload]);
+
   return (
     <UserContext.Provider value={{ user, setReload }}>
       {loading || children}
