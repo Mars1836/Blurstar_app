@@ -7,6 +7,7 @@ import { useUser } from "../../../../services/RequireAuth";
 import postRequest from "../../../../httprequest/post";
 import { ModelContext } from "../../Model";
 import AvatarName from "../../../Avatar/Inherit/AvatarName/AvatarName";
+import socket from "../../../../SocketIO/socket";
 const cx = classNames.bind(styles);
 function PostSite() {
   const [postDisable, setPostDisable] = useState(true);
@@ -25,7 +26,6 @@ function PostSite() {
     } else {
       setPostDisable(true);
     }
-    console.log(postContent);
   }, [postContent]);
   useEffect(() => {
     if (dataPost) {
@@ -44,7 +44,10 @@ function PostSite() {
       author: user._id,
       content: postContent,
     };
-    postRequest.createPost(newPost, dataURL);
+    postRequest.createPost(newPost, dataURL).then(({ data }) => {
+      socket.emit("up-post", data);
+      console.log("up-post");
+    });
     setClose(false);
   };
   const handleData = (e) => {

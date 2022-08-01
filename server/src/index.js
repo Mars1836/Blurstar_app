@@ -39,9 +39,12 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  console.log("a user connected");
+  console.log("a user connected.");
   socket.on("click", () => {
     io.sockets.emit("sv-click");
+  });
+  socket.on("up-post", (post) => {
+    io.sockets.emit("get-post", post);
   });
 });
 server.listen(PORT, () => {

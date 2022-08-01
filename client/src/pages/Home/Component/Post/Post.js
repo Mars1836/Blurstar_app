@@ -22,6 +22,8 @@ function Post({ data }) {
     setLiked(data.likes.includes(user._id));
   }, [liked]);
   useEffect(() => {
+    console.log(data.content.cap);
+
     userRequest.findById(data.author).then(({ data }) => {
       setAuthor(data);
     });

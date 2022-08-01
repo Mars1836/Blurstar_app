@@ -6,6 +6,7 @@ import postRequest from "../../httprequest/post.js";
 import userRequest from "../../httprequest/user.js";
 import Model from "../../components/Model";
 import { useEffect, useState } from "react";
+import socket from "../../SocketIO/socket.js";
 const cx = classNames.bind(styles);
 
 function Home() {
@@ -14,14 +15,16 @@ function Home() {
   useEffect(() => {
     postRequest.getAll().then(({ data }) => {
       setPosts(data);
-      console.log(data);
+    });
+    socket.on("get-post", (newPost) => {
+      setPosts((posts) => [newPost, ...posts]);
     });
   }, []);
   return (
     <div className={cx("wrapper")}>
       <div className={cx("post-site")}>
-        {posts.map((post, index) => {
-          return <Post data={post} key={index}></Post>;
+        {posts.map((post) => {
+          return <Post data={post} key={post._id}></Post>;
         })}
       </div>
       <div className={cx("st")}></div>
