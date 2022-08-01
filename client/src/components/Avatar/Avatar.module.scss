@@ -1,0 +1,14 @@
+.wrapper{
+    // position: absolute;
+    border-radius: 1000px;
+    overflow: hidden;
+    border: 1px solid rgba($color: #ffffff, $alpha: 1.0);
+    &:hover{
+        border: 1px solid black;
+    }
+    a{
+        line-height: 0px;
+        display: block;
+    }
+
+}

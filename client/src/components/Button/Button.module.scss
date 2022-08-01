@@ -1,0 +1,21 @@
+.wrapper{
+    cursor: pointer;
+    display: flex;
+    align-items:center;
+}
+.outline{
+
+}
+.text{
+
+}
+.blue-btn{
+
+}
+.avatar-btn{
+    border: 1px solid var(--ig-primary-background);
+    &:focus{
+        border: 1px solid black;
+    }
+    border-radius: 999px;
+}

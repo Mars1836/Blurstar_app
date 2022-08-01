@@ -1,0 +1,35 @@
+.header{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid rgb(219, 219, 219);
+    position: fixed;
+    top: 0;
+    background-color: #fff;
+}
+.wrapper{
+    width: 975px;
+    height: 60px;
+    padding: 0 20px;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+
+}
+.logo{
+    width: 333px;
+    display: flex;
+    align-items:center;
+}
+.logo_text{
+    font-family: 'Dancing Script', cursive;
+    font-size: 30px;
+    font-weight: 700;
+    color: #1C1E21;
+    width: 100px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+}
