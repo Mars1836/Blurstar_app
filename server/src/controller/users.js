@@ -46,11 +46,15 @@ const userController = {
   },
   findExceptId: async (req, res) => {
     const id = req.params.id;
+    const name = req.query.name || "";
     if (id) {
       const users = await User.find({ _id: { $ne: id } }).select(
         "name username avatar gender"
       );
-      res.json(users);
+      let filter = users.filter((user) => {
+        return user.name.includes(name);
+      });
+      res.json(filter);
     } else {
       res.json("Can't get userid");
     }

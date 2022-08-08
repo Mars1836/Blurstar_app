@@ -20,8 +20,10 @@ const findById = async (id) => {
     return user;
   }
 };
-const findExceptId = async (id) => {
-  const user = await instance.get(`${apiRoute.findExceptId + id}`);
+const findExceptId = async (id, payload) => {
+  const user = await instance.get(`${apiRoute.findExceptId + id}`, {
+    params: payload,
+  });
   return user;
 };
 const createUser = async (data) => {

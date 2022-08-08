@@ -31,7 +31,9 @@ app.use("/api/posts", postRouter);
 app.use("/api/users", userRouter);
 app.use("/api/messagses", messageRouter);
 app.use("/auth", authRouter);
-
+app.use("*", (req, res) => {
+  res.json("endpoint not found");
+});
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:3000",
