@@ -7,10 +7,17 @@ import AvatarName from "../../../../components/Avatar/Inherit/AvatarName/AvatarN
 import Comment from "./Comment.js";
 import userRequest from "../../../../httprequest/user.js";
 import postRequest from "../../../../httprequest/post.js";
-import { HiThumbUp, HiOutlineThumbUp } from "react-icons/hi";
-import { BiCommentDetail } from "react-icons/bi";
-import { IconContext } from "react-icons/lib";
 import Interaction from "./Interaction.js";
+import socket from "../../../../SocketIO/socket.js";
+import Tippy from "@tippyjs/react";
+import "tippy.js/dist/tippy.css"; // optional
+import Button from "../../../../components/Button/Button.js";
+import "./custem.css";
+import { IconButton } from "@mui/material";
+import Menu from "../../../../components/Menu/Menu.js";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 const cx = classNames.bind(styles);
 
 function Post({ data }) {
@@ -18,17 +25,27 @@ function Post({ data }) {
   const [author, setAuthor] = useState();
   const [comments, setComments] = useState([]);
   const [liked, setLiked] = useState(false);
+  const [date, setDate] = useState("");
   useEffect(() => {
     setLiked(data.likes.includes(user._id));
+    console.log(1);
   }, [liked]);
   useEffect(() => {
-    console.log(data.content.cap);
-
     userRequest.findById(data.author).then(({ data }) => {
       setAuthor(data);
     });
     setComments(data.comments);
     postContent.current.innerText = data.content.cap;
+    socket.on("get-comment", (comment) => {
+      setComments((comments) => [comment, ...comments]);
+    });
+    setDate(getDate());
+    const rsDate = setInterval(() => {
+      setDate(getDate());
+    }, 60 * 1000);
+    return () => {
+      clearInterval(rsDate);
+    };
   }, []);
   const postContent = useRef(null);
 
@@ -47,7 +64,7 @@ function Post({ data }) {
   };
   const handleKeyUp = (e) => {
     keyPress = keyPress.filter((item) => {
-      return item != e.key;
+      return item !== e.key;
     });
   };
   const handleSubmit = (e) => {
@@ -58,23 +75,101 @@ function Post({ data }) {
         userid: user._id,
         content: cmt,
       };
-      postRequest.addComment(data._id, newComment);
-      setComments([...comments, newComment]);
+      postRequest.addComment(data._id, newComment).then(({ data }) => {
+        socket.emit("comment", data);
+      });
       e.target.innerText = "";
     } else if (keyPress[0] === "Enter" && cmt === "") {
       e.preventDefault();
     }
   };
+  function getDate(short = 1) {
+    if (short) {
+      const options = {
+        minute: "numeric",
+        hour: "2-digit",
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      };
+      const date = Intl.DateTimeFormat("en", options).format(
+        Date.parse(data?.createdAt)
+      );
+      const timeCreated = Date.parse(data?.createdAt);
+      const current = new Date();
+      let diff = (current - timeCreated) / 1000;
+      let time;
+      if (diff < 3600 * 24) {
+        if (diff < 3600) {
+          if (diff < 60) {
+            time = "a few seconds";
+            return time;
+          }
+          time = Math.floor(diff / 60) + "m";
+          return time;
+        }
+        time = Math.floor(diff / 3600) + "h";
+        return time;
+      }
+      return date;
+    } else {
+      const options = {
+        minute: "numeric",
+        hour: "2-digit",
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        weekday: "short",
+      };
+      const date = Intl.DateTimeFormat("en", options).format(
+        Date.parse(data?.createdAt)
+      );
+      return date;
+    }
+  }
+  const optionsPost = [
+    {
+      title: "Remove",
+      icon: <DeleteIcon sx={{ fontSize: 20 }}></DeleteIcon>,
+      action: () => {
+        console.log(1);
+      },
+    },
+    { title: "Edit", icon: <EditIcon sx={{ fontSize: 20 }}></EditIcon> },
+  ];
   return (
     <div className={cx("post")}>
       <div className={cx("post-item")}>
+        <div className={cx("post-head")}>
+          <AvatarName
+            user={author}
+            size={35}
+            status={
+              <Tippy
+                content={getDate(0)}
+                placement="bottom-start"
+                theme="tomato"
+                arrow={false}
+                offset={[-10, 0]}
+              >
+                <Button text={1}>{date}</Button>
+              </Tippy>
+            }
+          ></AvatarName>
+          <Menu items={optionsPost}>
+            <IconButton size="small">
+              <MoreHorizIcon fontSize="large"></MoreHorizIcon>
+            </IconButton>
+          </Menu>
+        </div>
         <div className={cx("cap")}>
-          <AvatarName user={author} size={35}></AvatarName>
           <span className={cx("post-content")} ref={postContent}></span>
         </div>
-        <div className={cx("wapper-image")}>
-          <img src={data.content.data} className={cx("post-image")}></img>
-        </div>
+        {data.content.data && (
+          <div className={cx("wapper-image")}>
+            <img src={data.content.data} className={cx("post-image")}></img>
+          </div>
+        )}
         <Interaction
           like={liked}
           likes={data.likes}
@@ -104,8 +199,8 @@ function Post({ data }) {
             </div>
           </div>
           <div className={cx("comment-users")}>
-            {comments.map((comment, index) => {
-              return <Comment data={comment} key={index}></Comment>;
+            {comments.map((comment) => {
+              return <Comment data={comment} key={comment._id}></Comment>;
             })}
           </div>
         </div>

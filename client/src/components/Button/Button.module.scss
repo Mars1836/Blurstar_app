@@ -1,21 +1,23 @@
-.wrapper{
-    cursor: pointer;
-    display: flex;
-    align-items:center;
+.wrapper {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
 }
-.outline{
-
+.wrapper[text] {
+  &:hover {
+    text-decoration: underline;
+  }
 }
-.text{
-
+.outline {
 }
-.blue-btn{
-
+.text {
 }
-.avatar-btn{
-    border: 1px solid var(--ig-primary-background);
-    &:focus{
-        border: 1px solid black;
-    }
-    border-radius: 999px;
+.blue-btn {
+}
+.avatar-btn {
+  border: 1px solid var(--ig-primary-background);
+  &:focus {
+    border: 1px solid black;
+  }
+  border-radius: 999px;
 }

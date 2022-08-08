@@ -44,7 +44,7 @@ function Interaction({ like, postId, setLike, user, likes, commentInput }) {
           <button onClick={handleLike}>
             {isLiked ? (
               <>
-                <HiThumbUp /> Liked
+                <HiThumbUp /> Like
               </>
             ) : (
               <>

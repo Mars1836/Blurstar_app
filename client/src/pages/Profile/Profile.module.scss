@@ -1,0 +1,51 @@
+.wapper{
+    background-color: #fff;
+    width: 100%;
+}
+.head{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items:center;
+    .background{
+        background-color: rgba($color: #000000, $alpha: 0.1);
+        height: 50px;
+        width: 100%;
+    }
+    .avatar{
+        top:20px;
+        position: absolute;
+        width: min-content;
+        background-color: transparent;
+    }
+    .update-image-btn{
+        position: absolute;
+        top:0px;
+        right: -5px;
+        display: inline-block;
+        padding: 5px;
+        border-radius: 1000px;
+        border: 1px solid black;
+        background: white   ;
+    }
+    .name-user{
+        margin-top: 5px;
+        text-align: center;
+        font-weight: 500;
+        font-size: 1.8rem;
+    }
+}
+.infor{
+    margin-top: 150px;
+    .infor-field{
+        p{
+            display: inline-block;
+        }
+        display: flex;
+        gap:50px;
+    }
+    input{
+        border: 1px solid black;
+    }
+}

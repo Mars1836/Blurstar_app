@@ -1,23 +1,23 @@
-.wrapper{
-    width: 400px;
-    height: 300px;
-    border-radius: 10px;
-    background-color: white;
-    overflow-y: auto;
+.wrapper {
+  width: 400px;
+  height: 300px;
+  border-radius: 10px;
+  background-color: white;
+  overflow-y: auto;
 }
-.title{
-    padding: 10px;
-    text-align: center;
-    font-size: 1.7rem;
-    font-weight: 500;
-    border-bottom: 1px solid rgba($color: #000000, $alpha: 0.06) ;
+.title {
+  padding: 10px;
+  text-align: center;
+  font-size: 1.7rem;
+  font-weight: 500;
+  border-bottom: 1px solid rgba($color: #000000, $alpha: 0.06);
 }
-.list{
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
+.list {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
-.user{
-    border-bottom: 1px solid rgba($color: #000000, $alpha: 0.06);
-    padding: 10px 10px;
+.user {
+  border-bottom: 1px solid rgba($color: #000000, $alpha: 0.06);
+  padding: 10px 10px;
 }

@@ -1,61 +1,37 @@
-import { useState } from "react";
-import userRequest from "../../httprequest/user";
+import styles from "./Profile.module.scss";
+import classnames from "classnames/bind";
+import Button from "../../components/Button";
+import SetAvatar from "../../components/Model/components/SetAvatar";
+import Avatar from "../../components/Avatar";
 import { useUser } from "../../services/RequireAuth";
+import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
+import { useState } from "react";
+const cx = classnames.bind(styles);
 function Profile() {
-  const [fileValue, setFileValue] = useState("");
-  const [dataSource, setDataSource] = useState("");
-  const [fileUpload, setFileUpload] = useState("");
-  const { user, setReload } = useUser();
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const reader = new FileReader();
-    console.log(fileUpload);
-    reader.readAsDataURL(fileUpload);
-    reader.onloadend = () => {
-      uploadImage(reader.result);
-    };
-  };
-  const handleFileUploadChange = (e) => {
-    const file = e.target.files[0];
-    setFileValue(e.target.value);
-    previewFile(file);
-    setFileUpload(file);
-  };
-  const previewFile = (file) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      setDataSource(reader.result);
-      console.log(reader.result);
-    };
-    reader.onerror = () => {
-      console.error("AHHHHHHHH!!");
-    };
-  };
-  const uploadImage = (base64EncodedImage) => {
-    userRequest
-      .userUploadAvatar(base64EncodedImage, user._id)
-      .then(({ data }) => {
-        setReload(Math.random());
-      });
-  };
+  const { user } = useUser();
+  const [updateName, setUpdateName] = useState(false);
   return (
-    <div>
-      <form
-        onSubmit={(e) => {
-          handleSubmit(e);
-        }}
-      >
-        <input
-          type="file"
-          name="avatar"
-          value={fileValue}
-          onChange={handleFileUploadChange}
-        ></input>
-        <button>Send</button>
-      </form>
-      {dataSource && <img src={dataSource} width={500}></img>}
+    <div className={cx("wapper")}>
+      <div className={cx("head")}>
+        <div className={cx("background")}></div>
+        <div className={cx("avatar")}>
+          <Avatar size={80} user={user}></Avatar>
+          <span className={cx("update-image-btn")}>
+            <Button dialog={<SetAvatar />}>
+              <PhotoCameraIcon fontSize="medium"></PhotoCameraIcon>
+            </Button>
+          </span>
+          <p className={cx("name-user")}>{user?.name}</p>
+        </div>
+      </div>
+      <div className={cx("infor")}>
+        <ul>
+          <li className={cx("infor-field")}>
+            <p>Name</p>
+            <input type="text" readOnly={!updateName}></input>
+          </li>
+        </ul>
+      </div>
     </div>
   );
 }

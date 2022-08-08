@@ -14,6 +14,7 @@ const Button = React.forwardRef(
       dialog,
       onClick,
       componentOnHide,
+      text,
       ...props
     },
     ref
@@ -31,10 +32,12 @@ const Button = React.forwardRef(
         to={to}
         href={href}
         className={cx("wrapper", className)}
+        text={text}
         onClick={() => {
-          onClick();
+          if (typeof onClick === "function") {
+            onClick();
+          }
           setShowDialog(true);
-          console.log("button");
         }}
         {...props}
       >

@@ -1,12 +1,24 @@
-.wrapper{
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
-.user-name{
-    font-size: 1.7rem;
-    font-weight: 400;
-    &:hover{
-        text-decoration: underline;
-    }
+.contain {
+  display: flex;
+  flex-direction: column;
+  a {
+    display: block;
+    transform: translate(0, 3px);
+    line-height: 20px;
+  }
+}
+.status {
+  font-size: 1.2rem;
+}
+.user-name {
+  font-size: 1.7rem;
+  font-weight: 400;
+  &:hover {
+    text-decoration: underline;
+  }
 }

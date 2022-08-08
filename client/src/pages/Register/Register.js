@@ -37,28 +37,13 @@ const schema = yup
 const cx = classNames.bind(styles);
 function Register() {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+
   const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
-  const handlePassword = (e) => {
-    setPassword(e.target.value);
-  };
-  const handleEmail = (e) => {
-    setEmail(e.target.value);
-  };
-  const handleName = (e) => {
-    setName(e.target.value);
-  };
-  const handleUsername = (e) => {
-    setUsername(e.target.value);
-  };
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);

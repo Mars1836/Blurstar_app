@@ -46,6 +46,9 @@ io.on("connection", (socket) => {
   socket.on("up-post", (post) => {
     io.sockets.emit("get-post", post);
   });
+  socket.on("comment", (comment) => {
+    io.sockets.emit("get-comment", comment);
+  });
 });
 server.listen(PORT, () => {
   console.log("server is running");

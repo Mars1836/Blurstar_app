@@ -8,6 +8,8 @@ import postRequest from "../../../../httprequest/post";
 import { ModelContext } from "../../Model";
 import AvatarName from "../../../Avatar/Inherit/AvatarName/AvatarName";
 import socket from "../../../../SocketIO/socket";
+import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
+import { Button as ButtonMaterial } from "@mui/material";
 const cx = classNames.bind(styles);
 function PostSite() {
   const [postDisable, setPostDisable] = useState(true);
@@ -78,16 +80,27 @@ function PostSite() {
           className={cx("content-input")}
           onChange={handlePostContentChange}
         ></textarea>
-        <input
-          type="file"
-          className={cx("file-input")}
-          name="data"
-          onChange={(e) => {
-            handlePostContentChange(e);
-            handleData(e);
-          }}
-        ></input>
-        <div>
+        <div className={cx("photo-wapper")}>
+          <div htmlFor="upload-photo" className={cx("label-upload-photo")}>
+            <ButtonMaterial
+              component="label"
+              variant="contained"
+              size="large"
+              startIcon={<AddToPhotosIcon />}
+              className={cx("button-material")}
+            >
+              Upload Photo
+              <input
+                type="file"
+                className={cx("file-input")}
+                name="data"
+                onChange={(e) => {
+                  handlePostContentChange(e);
+                  handleData(e);
+                }}
+              ></input>
+            </ButtonMaterial>
+          </div>
           {dataURL && <img src={dataURL} className={cx("data-post")}></img>}
         </div>
       </div>

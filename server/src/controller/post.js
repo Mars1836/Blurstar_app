@@ -46,9 +46,16 @@ const postController = {
       {
         _id: id,
       },
-      { $push: { comments: newComment } }
+      {
+        $push: {
+          comments: {
+            $each: [newComment],
+            $position: 0,
+          },
+        },
+      }
     );
-    res.json(postUpdate);
+    res.json(newComment);
   },
   handleLike: async (req, res) => {
     const id = req.params.id; //id post

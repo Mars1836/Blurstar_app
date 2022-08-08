@@ -18,7 +18,7 @@ const addComment = async (postid, comment) => {
     userId: comment.userid,
     content: comment.content,
   });
-  console.log(comment);
+  console.log(newComment.data);
   return newComment;
 };
 const likePost = async (postId, userId) => {

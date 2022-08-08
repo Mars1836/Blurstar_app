@@ -6,26 +6,13 @@ import { useState, createContext, useContext } from "react";
 const cx = classNames.bind(styles);
 const lockContext = createContext(null);
 function DefaultLayout({ children }) {
-  const [isLock, setIsLock] = useState(false);
   return (
-    <lockContext.Provider value={setIsLock}>
-      <div
-        className={cx("default_layout")}
-        style={
-          isLock
-            ? {
-                overflow: "hidden",
-                height: "100vh",
-              }
-            : {}
-        }
-      >
-        <Header></Header>
-        <div className={cx("content")}>
-          <Sidebar>{children}</Sidebar>
-        </div>
+    <div className={cx("default_layout")}>
+      <Header></Header>
+      <div className={cx("content")}>
+        <Sidebar>{children}</Sidebar>
       </div>
-    </lockContext.Provider>
+    </div>
   );
 }
 export const useLock = () => {

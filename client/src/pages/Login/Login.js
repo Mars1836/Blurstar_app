@@ -16,8 +16,6 @@ const schema = yup.object({
   password: yup.string().required(),
 });
 function Login() {
-  const [usernameValue, setUsernameValue] = useState("");
-  const [passwordValue, setPasswordValue] = useState("");
   const [isBtnSubmitdDisable, setIsBtnSubmitdDisable] = useState(true);
   const {
     register,
@@ -54,12 +52,7 @@ function Login() {
         toast.error(response.data);
       });
   };
-  const handlePasswordValue = (e) => {
-    setPasswordValue(e.target.value);
-  };
-  const handleUsernameValue = (e) => {
-    setUsernameValue(e.target.value);
-  };
+
   return (
     <div className={cx("wrapper")}>
       <div className={cx("container")}>
