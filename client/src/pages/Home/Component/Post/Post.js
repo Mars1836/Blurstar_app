@@ -14,10 +14,12 @@ import "tippy.js/dist/tippy.css"; // optional
 import Button from "../../../../components/Button/Button.js";
 import "./custem.css";
 import { IconButton } from "@mui/material";
+import BookmarkIcon from "@mui/icons-material/Bookmark";
 import Menu from "../../../../components/Menu/Menu.js";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import HideSourceRoundedIcon from "@mui/icons-material/HideSourceRounded";
 const cx = classNames.bind(styles);
 
 function Post({ data }) {
@@ -26,6 +28,8 @@ function Post({ data }) {
   const [comments, setComments] = useState([]);
   const [liked, setLiked] = useState(false);
   const [date, setDate] = useState("");
+  const isAuthor = data.author === user._id;
+  console.log(isAuthor);
   useEffect(() => {
     setLiked(data.likes.includes(user._id));
     console.log(1);
@@ -127,7 +131,24 @@ function Post({ data }) {
       return date;
     }
   }
-  const optionsPost = [
+  const userOptions = [
+    {
+      title: "Hide",
+      icon: (
+        <HideSourceRoundedIcon sx={{ fontSize: 20 }}></HideSourceRoundedIcon>
+      ),
+    },
+    {
+      title: "Save",
+      icon: <BookmarkIcon sx={{ fontSize: 20 }}></BookmarkIcon>,
+    },
+  ];
+  const authorOptions = [
+    { title: "Edit", icon: <EditIcon sx={{ fontSize: 20 }}></EditIcon> },
+    {
+      title: "Save",
+      icon: <BookmarkIcon sx={{ fontSize: 20 }}></BookmarkIcon>,
+    },
     {
       title: "Remove",
       icon: <DeleteIcon sx={{ fontSize: 20 }}></DeleteIcon>,
@@ -135,7 +156,6 @@ function Post({ data }) {
         console.log(1);
       },
     },
-    { title: "Edit", icon: <EditIcon sx={{ fontSize: 20 }}></EditIcon> },
   ];
   return (
     <div className={cx("post")}>
@@ -156,7 +176,7 @@ function Post({ data }) {
               </Tippy>
             }
           ></AvatarName>
-          <Menu items={optionsPost}>
+          <Menu items={isAuthor ? authorOptions : userOptions}>
             <IconButton size="small">
               <MoreHorizIcon fontSize="large"></MoreHorizIcon>
             </IconButton>

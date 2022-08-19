@@ -3,13 +3,21 @@ import Comment from "../models/comment.js";
 import cloudinary from "../database/cloudinary.js";
 const postController = {
   getAll: async (req, res) => {
-    const posts = await Post.find().sort({ $natural: -1 });
-    res.json(posts);
+    try {
+      const posts = await Post.find().sort({ $natural: -1 });
+      res.json(posts);
+    } catch (err) {
+      res.status(500).json(err);
+    }
   },
   findById: async (req, res) => {
     const id = req.params.id;
-    const post = await Post.findById(id);
-    res.status(200).json(post);
+    try {
+      const post = await Post.findById(id);
+      res.status(200).json(post);
+    } catch (err) {
+      res.status(500).json(err);
+    }
   },
   create: async (req, res) => {
     const newPost = new Post({
@@ -22,6 +30,9 @@ const postController = {
       await cloudinary.uploader.upload(
         req.body.dataURL,
         async function (err, rs) {
+          if (err) {
+            return res.status(500).json(err);
+          }
           newPost.content.data = rs.url;
         }
       );
@@ -42,38 +53,48 @@ const postController = {
       userid: req.body.userId,
       content: req.body.content,
     });
-    const postUpdate = await Post.updateOne(
-      {
-        _id: id,
-      },
-      {
-        $push: {
-          comments: {
-            $each: [newComment],
-            $position: 0,
-          },
+    try {
+      const postUpdate = await Post.updateOne(
+        {
+          _id: id,
         },
-      }
-    );
-    res.json(newComment);
+        {
+          $push: {
+            comments: {
+              $each: [newComment],
+              $position: 0,
+            },
+          },
+        }
+      );
+      res.json(newComment);
+    } catch (error) {
+      res.status(500).json(error);
+    }
   },
   handleLike: async (req, res) => {
     const id = req.params.id; //id post
-    const post = await Post.findById(id);
-    const isexist = post?.likes.find((id) => id.toString() === req.body.userId);
-    if (isexist) {
-      await Post.update({ $pull: { likes: req.body.userId } });
-      res.json("dislike");
-      return;
-    }
+    try {
+      const post = await Post.findById(id);
+      const isexist = post?.likes.find(
+        (id) => id.toString() === req.body.userId
+      );
+      if (isexist) {
+        await Post.update({ $pull: { likes: req.body.userId } });
+        res.json("dislike");
+        return;
+      }
 
-    const like = await Post.update(
-      {
-        _id: id,
-      },
-      { $push: { likes: req.body.userId } }
-    );
-    res.status(200).json("like");
+      const like = await Post.update(
+        {
+          _id: id,
+        },
+        { $push: { likes: req.body.userId } }
+      );
+      res.status(200).json("like");
+    } catch (error) {
+      res.status(500).json(error);
+    }
   },
 };
 export default postController;

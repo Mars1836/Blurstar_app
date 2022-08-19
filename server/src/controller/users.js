@@ -48,9 +48,14 @@ const userController = {
     const id = req.params.id;
     const name = req.query.name || "";
     if (id) {
-      const users = await User.find({ _id: { $ne: id } }).select(
-        "name username avatar gender"
-      );
+      let users;
+      try {
+        users = await User.find({ _id: { $ne: id } }).select(
+          "name username avatar gender"
+        );
+      } catch (error) {
+        res.status(500).json(error);
+      }
       let filter = users.filter((user) => {
         return user.name.includes(name);
       });
@@ -67,18 +72,37 @@ const userController = {
     );
     res.status(200).json(users);
   },
+  findByUsername: async (req, res) => {
+    const username = req.params.username;
+    try {
+      let user = await User.find({ username: username }).select(
+        "name username avatar gender"
+      );
+      res.status(200).json(user[0]);
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
   uploadAvatar: async (req, res) => {
     const image = req.body.image;
     const userId = req.params.userid;
+    console.log("image");
     await cloudinary.uploader.upload(image, async function (error, result) {
-      const user = await User.updateOne(
-        { _id: userId },
-        {
-          $set: {
-            avatar: result.url,
-          },
-        }
-      );
+      if (error) {
+        return res.status(500).json(error);
+      }
+      try {
+        const user = await User.updateOne(
+          { _id: userId },
+          {
+            $set: {
+              avatar: result.url,
+            },
+          }
+        );
+      } catch (err) {
+        res.status(500).json(err);
+      }
     });
   },
 };

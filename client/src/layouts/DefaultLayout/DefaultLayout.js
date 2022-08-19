@@ -3,6 +3,7 @@ import classNames from "classnames/bind";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
 import { useState, createContext, useContext } from "react";
+import "~/styles/grid.css";
 const cx = classNames.bind(styles);
 const lockContext = createContext(null);
 function DefaultLayout({ children }) {

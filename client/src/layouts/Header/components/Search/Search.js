@@ -74,7 +74,11 @@ const Search = () => {
           <div className={cx("wrapper")} tabIndex="-1" {...attrs}>
             {userList.map((user) => {
               return (
-                <Button className={cx("item")} to={`/profile/${user.username}`}>
+                <Button
+                  className={cx("item")}
+                  to={`/profile/${user.username}`}
+                  key={user._id}
+                >
                   <Avatar user={user} size={35} link={false}></Avatar>
                   {user.name}
                 </Button>

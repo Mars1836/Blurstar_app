@@ -4,6 +4,7 @@ import "dotenv/config";
 import { v2 as cloudinary } from "cloudinary";
 import http from "http";
 import { Server } from "socket.io";
+import { verifyToken } from "./middlewares/auth.js";
 //api
 import groupRouter from "./routes/groups.js";
 import messageRouter from "./routes/messages.js";
@@ -25,11 +26,11 @@ conn.connect();
 app.use(cors(corsOption));
 app.use(express.json({ extended: true, limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
-app.use("/api/images", imageRouter);
-app.use("/api/groups", groupRouter);
-app.use("/api/posts", postRouter);
-app.use("/api/users", userRouter);
-app.use("/api/messagses", messageRouter);
+app.use("/api/images", verifyToken, imageRouter);
+app.use("/api/groups", verifyToken, groupRouter);
+app.use("/api/posts", verifyToken, postRouter);
+app.use("/api/users", verifyToken, userRouter);
+app.use("/api/messagses", verifyToken, messageRouter);
 app.use("/auth", authRouter);
 app.use("*", (req, res) => {
   res.json("endpoint not found");

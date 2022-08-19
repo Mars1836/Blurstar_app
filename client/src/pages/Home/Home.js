@@ -7,6 +7,7 @@ import userRequest from "../../httprequest/user.js";
 import Model from "../../components/Model";
 import { useEffect, useState } from "react";
 import socket from "../../SocketIO/socket.js";
+import "~/styles/grid.css";
 const cx = classNames.bind(styles);
 
 function Home() {
@@ -21,13 +22,17 @@ function Home() {
     });
   }, []);
   return (
-    <div className={cx("wrapper")}>
-      <div className={cx("post-site")}>
-        {posts.map((post) => {
-          return <Post data={post} key={post._id}></Post>;
-        })}
+    <div className={[cx("wrapper", "grid")]}>
+      <div className={cx("row")}>
+        <div className={cx("col l-6 l-0-3 m-8 m-0-2 c-12")}>
+          <div className={cx("post-site")}>
+            {posts.map((post) => {
+              return <Post data={post} key={post._id}></Post>;
+            })}
+            <div className={cx("st")}></div>
+          </div>
+        </div>
       </div>
-      <div className={cx("st")}></div>
     </div>
   );
 }

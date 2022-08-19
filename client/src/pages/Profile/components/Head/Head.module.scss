@@ -1,0 +1,34 @@
+.wrapper {
+  width: 100%;
+  margin: 0px 16px;
+}
+.avatar-container {
+  display: flex;
+}
+.avatar {
+  margin: 36px 82px;
+}
+.side-avatar {
+  margin: 24px 0;
+}
+.side-avatar-wapper {
+  display: flex;
+  gap: 12px;
+}
+.side-avatar-wapper > * {
+  align-self: center;
+}
+.parameter {
+  font-size: 1.1em;
+  display: flex;
+  gap: 42px;
+}
+.username {
+  font-weight: 300;
+  margin-right: 10px;
+}
+.background {
+  height: 300px;
+  width: 100%;
+  background-color: gray;
+}
