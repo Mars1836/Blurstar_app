@@ -20,19 +20,19 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import HideSourceRoundedIcon from "@mui/icons-material/HideSourceRounded";
+import LoadingComment from "~/components/Loading/LoadingComment/index.js";
 const cx = classNames.bind(styles);
 
-function Post({ data }) {
+function Post({ data, remove }) {
   const { user } = useUser();
   const [author, setAuthor] = useState();
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState(null);
   const [liked, setLiked] = useState(false);
   const [date, setDate] = useState("");
-  const isAuthor = data.author === user._id;
-  console.log(isAuthor);
+  const [isLoadingComment, setIsLoadingComment] = useState(true);
+  const isAuthor = data.author === user?._id;
   useEffect(() => {
-    setLiked(data.likes.includes(user._id));
-    console.log(1);
+    setLiked(data.likes.includes(user?._id));
   }, [liked]);
   useEffect(() => {
     userRequest.findById(data.author).then(({ data }) => {
@@ -153,7 +153,7 @@ function Post({ data }) {
       title: "Remove",
       icon: <DeleteIcon sx={{ fontSize: 20 }}></DeleteIcon>,
       action: () => {
-        console.log(1);
+        remove(data._id);
       },
     },
   ];
@@ -219,9 +219,19 @@ function Post({ data }) {
             </div>
           </div>
           <div className={cx("comment-users")}>
-            {comments.map((comment) => {
-              return <Comment data={comment} key={comment._id}></Comment>;
-            })}
+            {comments !== null && (
+              <>
+                {comments.map((comment) => {
+                  return (
+                    <Comment
+                      data={comment}
+                      key={comment._id}
+                      setLoading={setIsLoadingComment}
+                    ></Comment>
+                  );
+                })}
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -7,7 +7,7 @@ import userRequest from "../../../../httprequest/user";
 const cx = classNames.bind(styles);
 function Comment({ data }) {
   const [comments, setComments] = useState(data);
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
   useEffect(() => {
     userRequest
       .findById(data.userid)

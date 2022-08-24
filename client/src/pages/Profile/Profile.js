@@ -4,16 +4,14 @@ import Head from "./components/Head/Head";
 import { useUser } from "../../services/RequireAuth";
 import { useState, useEffect } from "react";
 import Button from "~/components/Button";
-import { borderTop } from "@mui/system";
 import { useLocation } from "react-router-dom";
 import userRequest from "~/httprequest/user";
 const cx = classnames.bind(styles);
 function Profile() {
   const { user } = useUser();
   const [author, setAuthor] = useState();
-  const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState(0);
-  const [isAuthor, setIsAuthor] = useState("");
+  const [isAuthor, setIsAuthor] = useState(null);
   const location = useLocation();
   const user_path = location.pathname.split("/")[2];
   useEffect(() => {
@@ -24,21 +22,20 @@ function Profile() {
       })
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        if (user) {
+          setIsAuthor(user_path === user?.username);
+        }
       });
-    if (user) {
-      setLoading(false);
-    } else {
-      return;
-    }
-    setIsAuthor(user_path === user?.username);
   }, [user, location]);
   return (
     <>
-      {loading || (
+      {isAuthor !== null ? (
         <div className={cx("wapper")}>
           <div className={cx("row")}>
             <div className={cx("col l-8 l-0-2")}>
-              <Head user={author} isAuthor={isAuthor}></Head>
+              <Head author={author} user={user} isAuthor={isAuthor}></Head>
               <div className={cx("tab")}>
                 <div className={cx("line")}></div>
                 <div className={cx("content")}>
@@ -219,6 +216,8 @@ function Profile() {
             </div>
           </div>
         </div>
+      ) : (
+        <></>
       )}
     </>
   );

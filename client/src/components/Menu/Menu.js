@@ -12,11 +12,12 @@ const Menu = ({ items, children, ...props }) => {
   return (
     <>
       <Tippy
-        {...props}
         interactive={true}
         placement="bottom-end"
+        onClickOutside={hide}
         offset={[20, 15]}
-        trigger="click"
+        visible={visible}
+        {...props}
         render={(attrs) => (
           <div className={cx("wrapper")} tabIndex="-1" {...attrs}>
             {items.map((item, index) => {
@@ -24,7 +25,10 @@ const Menu = ({ items, children, ...props }) => {
                 <Button
                   className={cx("item")}
                   key={index}
-                  onClick={item.action}
+                  onClick={() => {
+                    typeof item.action === "function" && item.action();
+                    hide();
+                  }}
                   {...item.props}
                 >
                   {item.icon}
@@ -35,7 +39,7 @@ const Menu = ({ items, children, ...props }) => {
           </div>
         )}
       >
-        {children}
+        <span onClick={visible ? hide : show}>{children}</span>
       </Tippy>
     </>
   );

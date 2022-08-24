@@ -7,8 +7,8 @@ import styles from "./SetAvatar.module.scss";
 import classnames from "classnames/bind";
 import { Slider } from "@mui/material";
 import { Button } from "@mui/material";
-import { FcAddImage } from "react-icons/fc";
 import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
+import LoadingPage from "~/components/Loading/LoadingPage";
 const cx = classnames.bind(styles);
 function SetAvatar() {
   const [fileValue, setFileValue] = useState("");
@@ -17,13 +17,13 @@ function SetAvatar() {
   const [cropper, setCropper] = useState("");
   const [cropURL, setCropURL] = useState("");
   const [size, setSize] = useState(50);
-  const [submitDisable, setSubmitDisable] = useState(true);
+  const [loading, setLoading] = useState(false);
   const { user, setReload } = useUser();
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
     const form = e.currentTarget;
     const reader = new FileReader();
-    console.log(fileUpload);
     reader.readAsDataURL(fileUpload);
     reader.onloadend = () => {
       uploadImage(cropURL);
@@ -50,8 +50,12 @@ function SetAvatar() {
   const uploadImage = (base64EncodedImage) => {
     userRequest
       .userUploadAvatar(base64EncodedImage, user._id)
-      .then(({ data }) => {
-        console.log(data);
+      .then(() => {
+        console.log("aa");
+      })
+      .finally(() => {
+        console.log("reload");
+        window.location.reload();
       });
   };
   var cropperRef = useRef(null);
@@ -74,6 +78,7 @@ function SetAvatar() {
         e.stopPropagation();
       }}
     >
+      {loading && <LoadingPage></LoadingPage>}
       <div className={cx("header")}>
         <p className={cx("title")}>Update profile picture</p>
       </div>
@@ -141,7 +146,6 @@ function SetAvatar() {
                 variant="outlined"
                 size="medium"
                 onClick={(e) => {
-                  handleCrop();
                   handleSubmit(e);
                 }}
                 disabled={!Boolean(cropURL)}

@@ -4,6 +4,8 @@ const apiRoute = {
   getPost: `/api/posts`,
   addComment: `/api/posts/addcomment/`,
   likePost: `/api/posts/like/`,
+  removePost: `/api/posts/`,
+  editPost: `/api/posts/`,
 };
 const getAll = async () => {
   const posts = await instance.get(`${apiRoute.getPost}`);
@@ -26,10 +28,14 @@ const likePost = async (postId, userId) => {
     userId: userId,
   });
 };
+const removePost = async () => {};
+const editPost = async () => {};
 const postRequest = {
   getAll,
   addComment,
   createPost,
   likePost,
+  removePost,
+  editPost,
 };
 export default postRequest;

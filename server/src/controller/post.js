@@ -1,6 +1,7 @@
 import Post from "../models/post.js";
 import Comment from "../models/comment.js";
 import cloudinary from "../database/cloudinary.js";
+import User from "../models/user.js";
 const postController = {
   getAll: async (req, res) => {
     try {
@@ -26,6 +27,7 @@ const postController = {
       like: [],
       comments: [],
     });
+
     if (req.body.dataURL) {
       await cloudinary.uploader.upload(
         req.body.dataURL,
@@ -39,9 +41,21 @@ const postController = {
     } else {
       newPost.content.data = "";
     }
-    newPost.save(function (err) {
+    newPost.save(async function (err) {
       if (err) {
         res.json(err);
+        return;
+      }
+      try {
+        console.log("update post", newPost.author);
+        await User.updateOne(
+          { _id: newPost.author },
+          {
+            $push: { posts: newPost._id },
+          }
+        );
+      } catch (error) {
+        res.json(error);
         return;
       }
       res.json(newPost);

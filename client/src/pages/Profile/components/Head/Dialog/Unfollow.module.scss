@@ -1,0 +1,29 @@
+.wapper {
+  min-width: 400px;
+  min-height: 300px;
+  background-color: #fff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding-top: 32px;
+  flex-direction: column;
+}
+.text {
+  margin: 32px 0;
+  font-weight: 300;
+}
+.btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: 100%;
+  :nth-child(1) {
+    color: var(--light-red);
+    font-weight: 500;
+  }
+  button {
+    padding: 16px;
+    border-top: 1px solid var(--light-gray);
+  }
+}

@@ -1,19 +1,16 @@
-
-.wrapper{
-    background: var(--ig-primary-background);
-    border-radius: 6px;
-    box-shadow: 0 0 2px rgb(134, 134, 134);
+.wrapper {
+  background: var(--ig-primary-background);
+  border-radius: 6px;
+  box-shadow: 0 0 2px rgb(134, 134, 134);
 }
-.item{
-    width: 230px;
-    padding: 8px 16px;
-    cursor: pointer;
-    &:hover{
-        background-color: rgba(0, 0, 0, 0.05);
-    }
-    display: flex;
-    align-items: center;
-    gap: 15px;
+.item {
+  width: 230px;
+  padding: 8px 16px;
+  cursor: pointer;
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
-
-

@@ -12,6 +12,7 @@ import postRouter from "./routes/posts.js";
 import userRouter from "./routes/users.js";
 import authRouter from "./routes/auth.js";
 import imageRouter from "./routes/images.js";
+import resetRouter from "./routes/reset.js";
 //database
 import conn from "./database/mongoose_connect.js";
 
@@ -32,6 +33,7 @@ app.use("/api/posts", verifyToken, postRouter);
 app.use("/api/users", verifyToken, userRouter);
 app.use("/api/messagses", verifyToken, messageRouter);
 app.use("/auth", authRouter);
+app.use("/api/reset", resetRouter);
 app.use("*", (req, res) => {
   res.json("endpoint not found");
 });

@@ -5,11 +5,13 @@ import userRequest from "../../../../httprequest/user";
 import { useEffect, useState } from "react";
 import AvatarName from "../../../Avatar/Inherit/AvatarName/AvatarName";
 const cx = classNames.bind(styles);
-const LikeModel = ({ postsId }) => {
+const LikeModel = ({ title, listUser }) => {
   const [users, setUsers] = useState([]);
+  const [listUsersData, setListUsersData] = useState([]);
   useEffect(() => {
-    userRequest.getUsersLike(postsId).then(({ data }) => {
-      setUsers(data);
+    listUser.then(({ data }) => {
+      console.log(data);
+      setListUsersData(data);
     });
   }, []);
   const handleClick = (e) => {
@@ -18,9 +20,9 @@ const LikeModel = ({ postsId }) => {
   };
   return (
     <div className={cx("wrapper")} onClick={handleClick}>
-      <div className={cx("title")}>Likes</div>
+      <div className={cx("title")}>{title ? title : "Likes"}</div>
       <div className={cx("list")}>
-        {users.map((user, index) => {
+        {listUsersData.map((user, index) => {
           console.log(user);
           return (
             <div className={cx("user")} key={index}>

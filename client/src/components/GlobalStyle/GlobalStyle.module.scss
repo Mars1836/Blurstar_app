@@ -1,10 +1,16 @@
 @import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Dongle:wght@300&family=Lora:ital@1&family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Poppins:wght@100;400;500;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;1,100;1,300&display=swap");
 :root {
   --ig-primary-text: rgb(38, 38, 38);
-  --ig-secondary-text: rgb(142, 142, 142);
+  --ig-secondary-text: rgb(96, 98, 102);
   --blue-4: #47afff;
+  --blue-3: rgb(0, 149, 246);
   --ig-primary-background: rgb(255, 255, 255);
-  --ligt-gray: rgb(219, 219, 219);
+  --light-gray: rgb(219, 219, 219);
+  --light-red: rgb(237, 73, 86);
+  --filter-accent: invert(38%) sepia(82%) saturate(2212%) hue-rotate(329deg)
+    brightness(96%) contrast(92%);
+  --filter-gray: invert(41%) sepia(7%) saturate(260%) hue-rotate(181deg)
+    brightness(88%) contrast(89%);
 }
 * {
   font-family: "Roboto", "Segoe UI", "Helvetica Neue", Arial, sans-serif;

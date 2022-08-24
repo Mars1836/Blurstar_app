@@ -78,6 +78,9 @@ const Search = () => {
                   className={cx("item")}
                   to={`/profile/${user.username}`}
                   key={user._id}
+                  onClick={() => {
+                    setInputFocus(false);
+                  }}
                 >
                   <Avatar user={user} size={35} link={false}></Avatar>
                   {user.name}
@@ -90,9 +93,6 @@ const Search = () => {
         visible={userList && inputFocus}
         onClickOutside={() => {
           setInputFocus(false);
-        }}
-        onFocus={(e) => {
-          console.log(e);
         }}
       >
         <input
