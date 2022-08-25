@@ -9,7 +9,16 @@ import Button from "../../../../components/Button";
 import LikeModel from "../../../../components/Model/components/Like/LikeModel";
 import userRequest from "~/httprequest/user";
 const cx = classNames.bind(styles);
-function Interaction({ like, postId, setLike, user, likes, commentInput }) {
+function Interaction({
+  like,
+  postId,
+  setLike,
+  user,
+  likes,
+  commentsQuantity,
+  commentInput,
+  handleCommentMount,
+}) {
   const [isLiked, setIsLiked] = useState(like);
   const [likeNum, setLikeNum] = useState(likes.length);
   const [listUsersLike, setListUsersLike] = useState();
@@ -27,7 +36,10 @@ function Interaction({ like, postId, setLike, user, likes, commentInput }) {
     isLiked ? setLikeNum(likeNum - 1) : setLikeNum(likeNum + 1);
   };
   const handleComment = () => {
-    commentInput.current.focus();
+    handleCommentMount.setIsCommentMount(!handleCommentMount.isCommentMount);
+    if (commentInput.current) {
+      commentInput.current.focus();
+    }
   };
   return (
     <>
@@ -49,10 +61,10 @@ function Interaction({ like, postId, setLike, user, likes, commentInput }) {
           </div>
         </Button>
         <div className={cx("cmsh")}>
-          <Button text>
-            <div className={cx("cs-num")}>0 Comments</div>
+          <Button text={1} onClick={handleComment}>
+            <div className={cx("cs-num")}>{commentsQuantity} Comments</div>
           </Button>
-          <Button text>
+          <Button text={1}>
             <div className={cx("cs-num")}>0 Shares</div>
           </Button>
         </div>

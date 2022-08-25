@@ -5,24 +5,37 @@ import Avatar from "../../../../components/Avatar";
 import AvatarComment from "../../../../components/Avatar/Inherit/AvatarComment/AvatarComment";
 import userRequest from "../../../../httprequest/user";
 const cx = classNames.bind(styles);
-function Comment({ data }) {
-  const [comments, setComments] = useState(data);
+function Comment({ data, setLoadingComment }) {
+  const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
   useEffect(() => {
     userRequest
       .findById(data.userid)
       .then(({ data }) => {
         setUser(data);
+        setIsLoading(false);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
-
+  useEffect(() => {
+    if (!isLoading && typeof setLoadingComment === "function") {
+      setTimeout(() => {
+        setLoadingComment();
+      }, 300);
+    }
+  }, [isLoading]);
   return (
-    <AvatarComment user={user} showName>
-      {data.content}
-    </AvatarComment>
+    <>
+      {!isLoading ? (
+        <AvatarComment user={user} showName>
+          {data.content}
+        </AvatarComment>
+      ) : (
+        <p></p>
+      )}
+    </>
   );
 }
 export default Comment;

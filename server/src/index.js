@@ -51,8 +51,8 @@ io.on("connection", (socket) => {
   socket.on("up-post", (post) => {
     io.sockets.emit("get-post", post);
   });
-  socket.on("comment", (comment) => {
-    io.sockets.emit("get-comment", comment);
+  socket.on("comment", (comment, postId) => {
+    io.sockets.emit("get-comment", comment, postId);
   });
 });
 server.listen(PORT, () => {

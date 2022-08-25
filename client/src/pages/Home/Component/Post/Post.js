@@ -27,6 +27,7 @@ function Post({ data, remove }) {
   const { user } = useUser();
   const [author, setAuthor] = useState();
   const [comments, setComments] = useState(null);
+  const [isCommentMount, setIsCommentMount] = useState(false);
   const [liked, setLiked] = useState(false);
   const [date, setDate] = useState("");
   const [isLoadingComment, setIsLoadingComment] = useState(true);
@@ -40,8 +41,10 @@ function Post({ data, remove }) {
     });
     setComments(data.comments);
     postContent.current.innerText = data.content.cap;
-    socket.on("get-comment", (comment) => {
-      setComments((comments) => [comment, ...comments]);
+    socket.on("get-comment", (comment, postId) => {
+      if (data._id === postId) {
+        setComments((comments) => [comment, ...comments]);
+      }
     });
     setDate(getDate());
     const rsDate = setInterval(() => {
@@ -79,8 +82,9 @@ function Post({ data, remove }) {
         userid: user._id,
         content: cmt,
       };
+      let postId = data._id;
       postRequest.addComment(data._id, newComment).then(({ data }) => {
-        socket.emit("comment", data);
+        socket.emit("comment", data, postId);
       });
       e.target.innerText = "";
     } else if (keyPress[0] === "Enter" && cmt === "") {
@@ -197,43 +201,57 @@ function Post({ data, remove }) {
           postId={data._id}
           setLike={setLiked}
           commentInput={commentInput}
+          commentsQuantity={comments?.length}
+          handleCommentMount={{ setIsCommentMount, isCommentMount }}
         />
-        <div className={cx("comment-site")}>
-          <div className={cx("comment-input-wrapper")}>
-            <Avatar size={35} user={user}></Avatar>
-            <div className={cx("comment-input-container")}>
-              <span
-                ref={commentInput}
-                contentEditable
-                placeholder="write a comment"
-                className={cx("comment-input")}
-                onKeyDown={(e) => {
-                  handleKeyDown(e);
-                  handleSubmit(e);
-                }}
-                onKeyUp={(e) => {
-                  handleKeyUp(e);
-                }}
-                onFocus={handleFocus}
-              ></span>
+        {isCommentMount && (
+          <div className={cx("comment-site")}>
+            <div className={cx("comment-input-wrapper")}>
+              <Avatar size={35} user={user}></Avatar>
+              <div className={cx("comment-input-container")}>
+                <span
+                  ref={commentInput}
+                  contentEditable
+                  placeholder="write a comment"
+                  className={cx("comment-input")}
+                  onKeyDown={(e) => {
+                    handleKeyDown(e);
+                    handleSubmit(e);
+                  }}
+                  onKeyUp={(e) => {
+                    handleKeyUp(e);
+                  }}
+                  onFocus={handleFocus}
+                ></span>
+              </div>
+            </div>
+            <div className={cx("comment-users")}>
+              {comments !== null && (
+                <>
+                  {comments.map((comment, index) => {
+                    return (
+                      <Comment
+                        data={comment}
+                        key={comment._id}
+                        setLoading={setIsLoadingComment}
+                        setLoadingComment={
+                          index === comments.length - 1
+                            ? () => {
+                                setIsLoadingComment(false);
+                              }
+                            : ""
+                        }
+                      ></Comment>
+                    );
+                  })}
+                  {isLoadingComment && comments.length > 0 && (
+                    <LoadingComment></LoadingComment>
+                  )}
+                </>
+              )}
             </div>
           </div>
-          <div className={cx("comment-users")}>
-            {comments !== null && (
-              <>
-                {comments.map((comment) => {
-                  return (
-                    <Comment
-                      data={comment}
-                      key={comment._id}
-                      setLoading={setIsLoadingComment}
-                    ></Comment>
-                  );
-                })}
-              </>
-            )}
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
