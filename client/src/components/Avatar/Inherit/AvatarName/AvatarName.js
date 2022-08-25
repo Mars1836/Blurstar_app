@@ -13,7 +13,7 @@ function AvatarName({ size, user, status }) {
           className={cx("user-name")}
           style={{ fontSize: `${size / 2.2}px` }}
         >
-          {user?.name}
+          {user?.username}
         </Link>
         <span className={cx("status")}>{status}</span>
       </div>

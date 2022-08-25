@@ -3,17 +3,14 @@ import styles from "./Home.module.scss";
 import classNames from "classnames/bind";
 import Post from "./Component/Post/Post.js";
 import postRequest from "../../httprequest/post.js";
-import userRequest from "../../httprequest/user.js";
-import Model from "../../components/Model";
 import { useEffect, useState } from "react";
 import socket from "../../SocketIO/socket.js";
 import "~/styles/grid.css";
-import LoadingComment from "~/components/Loading/LoadingComment/LoadingComment.js";
+import Sidebar from "~/layouts/Sidebar/Sidebar.js";
 const cx = classNames.bind(styles);
 
 function Home() {
   const [posts, setPosts] = useState([]);
-  const { user } = useUser();
   useEffect(() => {
     postRequest.getAll().then(({ data }) => {
       setPosts(data);
@@ -33,7 +30,7 @@ function Home() {
   return (
     <div className={[cx("wrapper", "grid")]}>
       <div className={cx("row")}>
-        <div className={cx("col l-4 l-0-4 m-8 m-0-2 c-12")}>
+        <div className={cx("col l-4 l-0-2-4 m-8 m-0-2 c-12")}>
           <div className={cx("post-site")}>
             {posts.map((post) => {
               return (
@@ -42,6 +39,9 @@ function Home() {
             })}
             <div className={cx("st")}></div>
           </div>
+        </div>
+        <div className={cx("col l-2  m-0 c-0")}>
+          <Sidebar></Sidebar>
         </div>
       </div>
     </div>

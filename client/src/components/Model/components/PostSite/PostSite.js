@@ -10,6 +10,8 @@ import AvatarName from "../../../Avatar/Inherit/AvatarName/AvatarName";
 import socket from "../../../../SocketIO/socket";
 import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
 import { Button as ButtonMaterial } from "@mui/material";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import { IconButton } from "@mui/material";
 const cx = classNames.bind(styles);
 function PostSite() {
   const [postDisable, setPostDisable] = useState(true);
@@ -21,6 +23,15 @@ function PostSite() {
   const { setClose } = useContext(ModelContext);
   useEffect(() => {
     contentInput.current.focus();
+    function getDataFromLocalStorage() {
+      let data =
+        localStorage.getItem("postContent") ||
+        JSON.stringify({ cap: "", data: "" });
+      let url = localStorage.getItem("dataURL") || "";
+      setPostContent(JSON.parse(data));
+      setDataURL(url);
+    }
+    getDataFromLocalStorage();
   }, []);
   useEffect(() => {
     if (postContent.cap || postContent.data) {
@@ -28,16 +39,29 @@ function PostSite() {
     } else {
       setPostDisable(true);
     }
+    contentInput.current.value = postContent.cap;
+    return () => {
+      localStorage.setItem("postContent", JSON.stringify(postContent));
+    };
   }, [postContent]);
   useEffect(() => {
     if (dataPost) {
-      const reader = new FileReader();
-      reader.readAsDataURL(dataPost);
-      reader.onloadend = () => {
-        setDataURL(reader.result);
-      };
+      try {
+        const reader = new FileReader();
+        reader.readAsDataURL(dataPost);
+        reader.onloadend = () => {
+          setDataURL(reader.result);
+        };
+      } catch (error) {
+        console.log(error);
+      }
     }
   }, [dataPost]);
+  useEffect(() => {
+    return () => {
+      localStorage.setItem("dataURL", dataURL);
+    };
+  }, [dataURL]);
   const handleClick = (e) => {
     e.stopPropagation();
   };
@@ -48,7 +72,6 @@ function PostSite() {
     };
     postRequest.createPost(newPost, dataURL).then(({ data }) => {
       socket.emit("up-post", data);
-      console.log("up-post");
     });
     setClose(false);
   };
@@ -100,6 +123,21 @@ function PostSite() {
                 }}
               ></input>
             </ButtonMaterial>
+
+            {dataPost && (
+              <ButtonMaterial
+                color="error"
+                size="large"
+                variant="contained"
+                sx={{ padding: 0, minWidth: 30, height: 30 }}
+                onClick={() => {
+                  setDataURL("");
+                  setDataPost("");
+                }}
+              >
+                <HighlightOffIcon size="large" sx={{ fontSize: 20 }} />
+              </ButtonMaterial>
+            )}
           </div>
           {dataURL && <img src={dataURL} className={cx("data-post")}></img>}
         </div>

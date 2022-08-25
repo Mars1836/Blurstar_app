@@ -36,7 +36,7 @@ function Interaction({
     isLiked ? setLikeNum(likeNum - 1) : setLikeNum(likeNum + 1);
   };
   const handleComment = () => {
-    handleCommentMount.setIsCommentMount(!handleCommentMount.isCommentMount);
+    handleCommentMount.setIsCommentMount(true);
     if (commentInput.current) {
       commentInput.current.focus();
     }
@@ -61,7 +61,14 @@ function Interaction({
           </div>
         </Button>
         <div className={cx("cmsh")}>
-          <Button text={1} onClick={handleComment}>
+          <Button
+            text={1}
+            onClick={() => {
+              handleCommentMount.setIsCommentMount(
+                !handleCommentMount.isCommentMount
+              );
+            }}
+          >
             <div className={cx("cs-num")}>{commentsQuantity} Comments</div>
           </Button>
           <Button text={1}>

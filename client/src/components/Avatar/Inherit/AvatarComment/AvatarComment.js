@@ -22,7 +22,7 @@ function AvatarComment({ size, user, showName, children }) {
             className={cx("user-name")}
             style={{ fontSize: `${size / 2}px` }}
           >
-            {user?.name}
+            {user?.username}
           </Link>
         )}
         <span ref={content}></span>

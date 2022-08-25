@@ -70,8 +70,12 @@
   position: absolute;
   top: 10px;
   left: 5px;
+  right: 5px;
   opacity: 0.8;
-
+  display: flex;
+  justify-content: space-between;
+  & > * {
+  }
   .button-material {
     font-size: 1.2rem;
   }
