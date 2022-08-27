@@ -22,7 +22,6 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import HideSourceRoundedIcon from "@mui/icons-material/HideSourceRounded";
 import LoadingComment from "~/components/Loading/LoadingComment/index.js";
 const cx = classNames.bind(styles);
-
 function Post({ data, remove }) {
   const { user } = useUser();
   const [author, setAuthor] = useState();

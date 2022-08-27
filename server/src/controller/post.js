@@ -20,6 +20,16 @@ const postController = {
       res.status(500).json(err);
     }
   },
+  findList: async (req, res) => {
+    const list = req.body.listId;
+    console.log(list);
+    try {
+      const posts = await Post.find({ _id: { $in: list } });
+      res.status(200).json(posts);
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
   create: async (req, res) => {
     const newPost = new Post({
       author: req.body.post.author,
@@ -47,7 +57,6 @@ const postController = {
         return;
       }
       try {
-        console.log("update post", newPost.author);
         await User.updateOne(
           { _id: newPost.author },
           {

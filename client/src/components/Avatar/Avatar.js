@@ -15,10 +15,7 @@ function Avatar({ size, user, link }) {
           width={size || 40}
           height={size || 40}
           className={cx("avatar")}
-          src={
-            user?.avatar ||
-            "https://cdn-icons-png.flaticon.com/512/147/147142.png"
-          }
+          src={user?.avatar || `${process.env.PUBLIC_URL + "/avtdf.png"}`}
         ></img>
       </Comp>
     </div>

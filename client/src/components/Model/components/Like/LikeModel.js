@@ -1,9 +1,7 @@
 import styles from "./LikeModel.module.scss";
 import classNames from "classnames/bind";
-import postRequest from "../../../../httprequest/post";
-import userRequest from "../../../../httprequest/user";
+import AvatarBox from "~/components/Avatar/Inherit/AvatarBox";
 import { useEffect, useState } from "react";
-import AvatarName from "../../../Avatar/Inherit/AvatarName/AvatarName";
 const cx = classNames.bind(styles);
 const LikeModel = ({ title, listUser }) => {
   const [users, setUsers] = useState([]);
@@ -26,7 +24,7 @@ const LikeModel = ({ title, listUser }) => {
           console.log(user);
           return (
             <div className={cx("user")} key={index}>
-              <AvatarName user={user} size={35}></AvatarName>
+              <AvatarBox user={user}></AvatarBox>
             </div>
           );
         })}

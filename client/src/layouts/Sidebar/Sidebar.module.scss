@@ -1,9 +1,45 @@
-.sidebar {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  min-height: 100vh;
-}
 .wrapper {
-  width: 600px;
+  padding: 16px 8px;
+}
+
+.title-suggest {
+  display: flex;
+  justify-content: space-between;
+}
+.text-1 {
+  margin: 16px 0;
+  color: rgb(152, 152, 152);
+  font-weight: 600;
+  font-size: 0.98em;
+}
+.text-2 {
+  font-weight: 500;
+  font-size: 0.9em;
+}
+.list-user {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.side-footer {
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  li {
+    color: var(--ig-secondary-text);
+    font-size: 0.85em;
+    list-style-type: none;
+    a:hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
+  li::after {
+    content: "\00B7";
+    display: inline-block;
+    margin: 0 2px;
+  }
+  li:last-child::after {
+    content: "";
+  }
 }

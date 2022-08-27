@@ -73,13 +73,13 @@ const userController = {
         users = await User.find({ _id: { $ne: id } }).select(
           "-password -email"
         );
+        let filter = users.filter((user) => {
+          return user.name.includes(name);
+        });
+        res.json(filter);
       } catch (error) {
         res.status(500).json(error);
       }
-      let filter = users.filter((user) => {
-        return user.name.includes(name);
-      });
-      res.json(filter);
     } else {
       res.json("Can't get userid");
     }
@@ -135,7 +135,41 @@ const userController = {
   getFollowing: async (req, res) => {
     const userFollow = req.body.userFollowId;
     const userGetFollow = req.body.userGetFollowId;
+    const isFollowed = await User.findOne({
+      _id: userFollow,
+      following: { $elemMatch: { $eq: userGetFollow } },
+    });
     try {
+      const isFollowed = await User.findOne({
+        _id: userFollow,
+        following: { $elemMatch: { $eq: userGetFollow } },
+      });
+      if (!isFollowed) {
+        await User.updateOne(
+          { _id: userFollow },
+          {
+            $push: { following: userGetFollow },
+          }
+        );
+        await User.updateOne(
+          { _id: userGetFollow },
+          {
+            $push: { followers: userFollow },
+          }
+        );
+        res.status(200).json("followed");
+        return;
+      }
+      res.status(200).json("b");
+    } catch (error) {
+      console.log("error");
+      res.status(500).json(error);
+    }
+  },
+  getUnFollowing: async (req, res) => {
+    try {
+      const userFollow = req.body.userFollowId;
+      const userGetFollow = req.body.userGetFollowId;
       const isFollowed = await User.findOne({
         _id: userFollow,
         following: { $elemMatch: { $eq: userGetFollow } },
@@ -151,27 +185,10 @@ const userController = {
         );
         res.status(200).json("unfollow");
         return;
+      } else {
+        res.status(200).json("a");
       }
     } catch (error) {
-      console.log(error);
-      res.status(500).json(error);
-    }
-    try {
-      await User.updateOne(
-        { _id: userFollow },
-        {
-          $push: { following: userGetFollow },
-        }
-      );
-      await User.updateOne(
-        { _id: userGetFollow },
-        {
-          $push: { followers: userFollow },
-        }
-      );
-      res.status(200).json("followed");
-    } catch (error) {
-      console.log("error");
       res.status(500).json(error);
     }
   },

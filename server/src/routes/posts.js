@@ -6,4 +6,5 @@ postRouter.post("/", postController.create);
 postRouter.get("/find/:id", postController.findById);
 postRouter.patch("/addcomment/:id", postController.addComment);
 postRouter.patch("/like/:id", postController.handleLike);
+postRouter.post("/findlist", postController.findList);
 export default postRouter;

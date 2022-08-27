@@ -1,0 +1,28 @@
+.item {
+  line-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  & > * {
+    align-self: center;
+  }
+  .item-text {
+    p {
+      line-height: 18px;
+    }
+  }
+  .item-text .username {
+    font-weight: 400;
+  }
+  .item-text .name {
+    color: var(--ig-secondary-text);
+    font-weight: 300;
+  }
+  .btn-side {
+    margin-left: auto;
+    color: var(--blue-3);
+    font-weight: 500;
+    font-size: 0.9em;
+  }
+}

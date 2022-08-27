@@ -77,7 +77,16 @@ function Interaction({
         </div>
       </div>
       <div className={cx("interaction")}>
-        <div className={cx("inter-wapper")}>
+        <div
+          className={cx("inter-wapper")}
+          style={
+            handleCommentMount.isCommentMount
+              ? {
+                  borderBottom: "1px solid lightgray",
+                }
+              : {}
+          }
+        >
           <IconContext.Provider
             value={{
               size: "2rem",

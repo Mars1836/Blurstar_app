@@ -83,7 +83,11 @@ const Search = () => {
                   }}
                 >
                   <Avatar user={user} size={35} link={false}></Avatar>
-                  {user.name}
+
+                  <span className={cx("item-text")}>
+                    <p className={cx("username")}> {user.username}</p>
+                    <p className={cx("name")}>{user.name}</p>
+                  </span>
                 </Button>
               );
             })}

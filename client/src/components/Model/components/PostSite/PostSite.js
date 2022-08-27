@@ -72,7 +72,10 @@ function PostSite() {
     };
     postRequest.createPost(newPost, dataURL).then(({ data }) => {
       socket.emit("up-post", data);
+      localStorage.removeItem("postContent");
+      localStorage.removeItem("dataURL");
     });
+
     setClose(false);
   };
   const handleData = (e) => {
@@ -124,7 +127,7 @@ function PostSite() {
               ></input>
             </ButtonMaterial>
 
-            {dataPost && (
+            {dataURL && (
               <ButtonMaterial
                 color="error"
                 size="large"

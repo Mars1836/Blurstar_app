@@ -11,4 +11,5 @@ userRouter.delete("/:id"), userRouter.put("/:id");
 userRouter.post("/uploadavatar/:userid", userController.uploadAvatar);
 userRouter.get("/find_by_username/:username", userController.findByUsername);
 userRouter.post("/follow", userController.getFollowing);
+userRouter.post("/unfollow", userController.getUnFollowing);
 export default userRouter;

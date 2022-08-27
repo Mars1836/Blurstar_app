@@ -7,6 +7,7 @@
   align-self: start;
 }
 .content {
+  display: block;
   word-wrap: break-word;
   a {
     display: block;
@@ -16,6 +17,7 @@
   padding: 4px 8px;
   border-radius: 10px;
   max-width: 90%;
+  position: relative;
 }
 .user-name {
   font-size: 1.5rem;
@@ -24,4 +26,11 @@
   &:hover {
     text-decoration: underline;
   }
+}
+.bottom-comment {
+  font-size: 0.9em;
+  color: var(--ig-secondary-text);
+  margin-left: 5px;
+  display: flex;
+  gap: 10px;
 }

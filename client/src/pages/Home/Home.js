@@ -1,4 +1,3 @@
-import { useUser } from "../../services/RequireAuth.js";
 import styles from "./Home.module.scss";
 import classNames from "classnames/bind";
 import Post from "./Component/Post/Post.js";
@@ -29,8 +28,8 @@ function Home() {
   }
   return (
     <div className={[cx("wrapper", "grid")]}>
-      <div className={cx("row")}>
-        <div className={cx("col l-4 l-0-2-4 m-8 m-0-2 c-12")}>
+      <div className={cx("row center")}>
+        <div className={cx("col l-4 m-8 c-12")}>
           <div className={cx("post-site")}>
             {posts.map((post) => {
               return (
@@ -40,7 +39,7 @@ function Home() {
             <div className={cx("st")}></div>
           </div>
         </div>
-        <div className={cx("col l-2  m-0 c-0")}>
+        <div className={cx("col l-3  m-0 c-0")}>
           <Sidebar></Sidebar>
         </div>
       </div>

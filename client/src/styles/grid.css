@@ -23,7 +23,9 @@ body {
   margin-left: -4px;
   margin-right: -4px;
 }
-
+.row.center {
+  justify-content: center;
+}
 .col {
   padding-left: 4px;
   padding-right: 4px;

@@ -29,7 +29,7 @@ function Comment({ data, setLoadingComment }) {
   return (
     <>
       {!isLoading ? (
-        <AvatarComment user={user} showName>
+        <AvatarComment user={user} showName comment={data}>
           {data.content}
         </AvatarComment>
       ) : (

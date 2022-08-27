@@ -2,8 +2,12 @@
   // position: absolute;
   border-radius: 1000px;
   overflow: hidden;
+  img {
+    border-radius: 1000px;
+    border: 1px solid rgba($color: #ababab, $alpha: 1);
+  }
+  overflow: hidden;
   width: min-content;
-  // border: 1px solid rgba($color: #ffffff, $alpha: 1.0);
   // &:hover{
   //     border: 1px solid black;
   // }

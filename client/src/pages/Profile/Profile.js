@@ -6,12 +6,16 @@ import { useState, useEffect } from "react";
 import Button from "~/components/Button";
 import { useLocation } from "react-router-dom";
 import userRequest from "~/httprequest/user";
+import Post from "../Home/Component/Post";
+import postRequest from "~/httprequest/post";
+import LoadingComment from "~/components/Loading/LoadingComment";
 const cx = classnames.bind(styles);
 function Profile() {
   const { user } = useUser();
   const [author, setAuthor] = useState();
   const [tab, setTab] = useState(0);
   const [isAuthor, setIsAuthor] = useState(null);
+  const [posts, setPosts] = useState();
   const location = useLocation();
   const user_path = location.pathname.split("/")[2];
   useEffect(() => {
@@ -19,6 +23,12 @@ function Profile() {
       .getUserByUsername(user_path)
       .then(({ data }) => {
         setAuthor(data);
+        postRequest
+          .getListPosts(data.posts)
+          .then(({ data }) => {
+            setPosts(data);
+          })
+          .catch(() => {});
       })
       .catch((err) => {
         console.log(err);
@@ -29,12 +39,20 @@ function Profile() {
         }
       });
   }, [user, location]);
+  function removePost(id) {
+    const index = posts.findIndex((post) => {
+      return id === post._id;
+    });
+    let newPost = [...posts];
+    newPost.splice(index, 1);
+    setPosts(newPost);
+  }
   return (
     <>
       {isAuthor !== null ? (
         <div className={cx("wapper")}>
           <div className={cx("row")}>
-            <div className={cx("col l-8 l-0-2")}>
+            <div className={cx("col l-8 l-0-2 m-10 m-0-1 c-12")}>
               <Head author={author} user={user} isAuthor={isAuthor}></Head>
               <div className={cx("tab")}>
                 <div className={cx("line")}></div>
@@ -213,6 +231,29 @@ function Profile() {
                   </span>
                 </div>
               </div>
+              {tab === 0 && (
+                <div className={cx("row")}>
+                  <div className={cx("col l-6 l-0-3 m-8 m-0-2 c-12")}>
+                    <div className={cx("post-site")}>
+                      {posts ? (
+                        <>
+                          {posts.map((post) => {
+                            return (
+                              <Post
+                                data={post}
+                                key={post._id}
+                                remove={removePost}
+                              ></Post>
+                            );
+                          })}
+                        </>
+                      ) : (
+                        <LoadingComment></LoadingComment>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -223,26 +264,3 @@ function Profile() {
   );
 }
 export default Profile;
-
-// {
-//    <div className={cx("head")}>
-//         <div className={cx("background")}></div>
-//         <div className={cx("avatar")}>
-//           <Avatar size={80} user={user}></Avatar>
-//           <span className={cx("update-image-btn")}>
-//             <Button dialog={<SetAvatar />}>
-//               <PhotoCameraIcon fontSize="medium"></PhotoCameraIcon>
-//             </Button>
-//           </span>
-//           <p className={cx("name-user")}>{user?.name}</p>
-//         </div>
-//       </div>
-//       <div className={cx("infor")}>
-//         <ul>
-//           <li className={cx("infor-field")}>
-//             <p>Name</p>
-//             <input type="text" readOnly={!updateName}></input>
-//           </li>
-//         </ul>
-//       </div>
-// }
