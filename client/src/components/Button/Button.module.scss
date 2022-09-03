@@ -4,14 +4,16 @@
   align-items: center;
   gap: 5px;
 }
+.wrapper[disabled] {
+  pointer-events: none;
+}
 .wrapper:active {
   opacity: 0.6;
 }
-.wrapper[text] {
-  &:hover {
-    text-decoration: underline;
-  }
+.wrapper[underline]:hover {
+  text-decoration: underline;
 }
+
 .outline {
 }
 .text {

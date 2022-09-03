@@ -2,10 +2,10 @@ import React from "react";
 import styles from "./Unfollow.module.scss";
 import classNames from "classnames/bind";
 import Avatar from "~/components/Avatar";
-import { ModelContext } from "~/components/Model/Model";
+import { ModelContext } from "../../Model";
 import { useContext } from "react";
 const cx = classNames.bind(styles);
-function Unfollow({ user, handleFollow }) {
+function Unfollow({ user, handleUnFollow, text = "Unfollow" }) {
   const model = useContext(ModelContext);
   return (
     <div
@@ -19,11 +19,11 @@ function Unfollow({ user, handleFollow }) {
       <div className={cx("btn")}>
         <button
           onClick={() => {
-            handleFollow();
-            model.setClose();
+            handleUnFollow();
+            model.handleClose();
           }}
         >
-          Unfollow
+          {text}
         </button>
         <button
           onClick={() => {

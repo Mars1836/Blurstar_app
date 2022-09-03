@@ -6,9 +6,11 @@ import "~/styles/grid.css";
 import userRequest from "~/httprequest/user";
 import Button from "~/components/Button";
 import SetAvatar from "~/components/Model/components/SetAvatar";
-import Unfollow from "./Dialog/Unfollow";
 import { useLayoutEffect } from "react";
 import LikeModel from "~/components/Model/components/Like/LikeModel";
+import UnfollowBtn from "~/components/FollowBtn/UnfollowBtn";
+import FollowBtn from "~/components/FollowBtn/FollowBtn";
+import socket from "~/SocketIO/socket";
 const cx = classNames.bind(styles);
 const border = {
   border: "1px solid #DBDBDB",
@@ -33,8 +35,24 @@ const Head = ({ user, author, isAuthor }) => {
   const [isFollowing, setIsFollowing] = useState("");
   const [followers, setFollowers] = useState(author?.followers);
   const [following, setFollowing] = useState(author?.following);
+  useEffect(() => {
+    socket.on("get-follow-user", (user, mainUser) => {
+      if (author._id === user._id) {
+        setFollowers([mainUser._id, ...followers]);
+      }
+    });
+    socket.on("get-unfollow-user", (user, mainUser) => {
+      if (author._id === user._id) {
+        const newfollers = followers.filter((follower) => {
+          return follower._id !== mainUser._id;
+        });
+        setFollowers(newfollers);
+      }
+    });
+  }, []);
   useLayoutEffect(() => {
     setIsFollowing(user?.following.includes(author?._id));
+    console.log(user?.following);
   }, [author, user]);
   useEffect(() => {
     setFollowers(author?.followers);
@@ -43,13 +61,7 @@ const Head = ({ user, author, isAuthor }) => {
   function getListUsers(list) {
     return userRequest.getUsersByListsId(list);
   }
-  function handleFollow() {
-    const userFollowId = user._id;
-    const userGetFollowId = author._id;
-    userRequest.follow(userFollowId, userGetFollowId).then((data) => {
-      setIsFollowing(!isFollowing);
-    });
-  }
+
   return (
     <div className={cx("wrapper")}>
       <div className={cx("avatar-container")}>
@@ -57,7 +69,7 @@ const Head = ({ user, author, isAuthor }) => {
           <Button dialog={<SetAvatar></SetAvatar>}>
             <Avatar user={author} size={150} link={0}></Avatar>
           </Button>
-        </div>
+        </div>{" "}
         <div className={cx("side-avatar")}>
           <div className={cx("side-avatar-wapper")}>
             <h1 className={cx("username")}>{author?.username}</h1>
@@ -98,39 +110,43 @@ const Head = ({ user, author, isAuthor }) => {
               </>
             ) : (
               <>
+                <Button style={border}>Message</Button>
                 {isFollowing ? (
                   <>
-                    {" "}
-                    <Button style={border}>Message</Button>
-                    <Button
+                    <UnfollowBtn
                       style={border}
-                      dialog={
-                        <Unfollow
-                          user={author}
-                          handleFollow={handleFollow}
-                        ></Unfollow>
+                      mainUser={user}
+                      user={author}
+                      action={() => {
+                        setIsFollowing(false);
+                      }}
+                      text={
+                        <svg
+                          aria-label="Following"
+                          className="_ab6-"
+                          color="#262626"
+                          fill="#262626"
+                          height="15"
+                          role="img"
+                          viewBox="0 0 95.28 70.03"
+                          width="20"
+                        >
+                          <path d="M64.23 69.98c-8.66 0-17.32-.09-26 0-3.58.06-5.07-1.23-5.12-4.94-.16-11.7 8.31-20.83 20-21.06 7.32-.15 14.65-.14 22 0 11.75.22 20.24 9.28 20.1 21 0 3.63-1.38 5.08-5 5-8.62-.1-17.28 0-25.98 0zm19-50.8A19 19 0 1164.32 0a19.05 19.05 0 0118.91 19.18zM14.76 50.01a5 5 0 01-3.37-1.31L.81 39.09a2.5 2.5 0 01-.16-3.52l3.39-3.7a2.49 2.49 0 013.52-.16l7.07 6.38 15.73-15.51a2.48 2.48 0 013.52 0l3.53 3.58a2.49 2.49 0 010 3.52L18.23 48.57a5 5 0 01-3.47 1.44z"></path>
+                        </svg>
                       }
-                    >
-                      <svg
-                        aria-label="Following"
-                        className="_ab6-"
-                        color="#262626"
-                        fill="#262626"
-                        height="15"
-                        role="img"
-                        viewBox="0 0 95.28 70.03"
-                        width="20"
-                      >
-                        <path d="M64.23 69.98c-8.66 0-17.32-.09-26 0-3.58.06-5.07-1.23-5.12-4.94-.16-11.7 8.31-20.83 20-21.06 7.32-.15 14.65-.14 22 0 11.75.22 20.24 9.28 20.1 21 0 3.63-1.38 5.08-5 5-8.62-.1-17.28 0-25.98 0zm19-50.8A19 19 0 1164.32 0a19.05 19.05 0 0118.91 19.18zM14.76 50.01a5 5 0 01-3.37-1.31L.81 39.09a2.5 2.5 0 01-.16-3.52l3.39-3.7a2.49 2.49 0 013.52-.16l7.07 6.38 15.73-15.51a2.48 2.48 0 013.52 0l3.53 3.58a2.49 2.49 0 010 3.52L18.23 48.57a5 5 0 01-3.47 1.44z"></path>
-                      </svg>
-                    </Button>
+                    ></UnfollowBtn>
                   </>
                 ) : (
                   <>
-                    <Button style={border}>Message</Button>
-                    <Button style={fill} onClick={handleFollow}>
-                      Follow
-                    </Button>
+                    <FollowBtn
+                      style={fill}
+                      text={"Follow"}
+                      mainUser={user}
+                      user={author}
+                      action={() => {
+                        setIsFollowing(true);
+                      }}
+                    ></FollowBtn>
                   </>
                 )}
               </>

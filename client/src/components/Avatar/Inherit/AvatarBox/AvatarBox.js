@@ -5,7 +5,7 @@ import Avatar from "../../Avatar";
 import { Link } from "react-router-dom";
 import Button from "~/components/Button";
 const cx = classNames.bind(styles);
-function AvatarBox({ user, avtLarge, action }) {
+function AvatarBox({ user, avtLarge, btn }) {
   return (
     <div className={cx("item")}>
       <Avatar user={user} size={avtLarge ? 56 : 32} link={true}></Avatar>
@@ -16,9 +16,7 @@ function AvatarBox({ user, avtLarge, action }) {
         </Link>
         <p className={cx("name")}>{user?.name}</p>
       </span>
-      <Button className={cx("btn-side")} text>
-        {action}
-      </Button>
+      <span className={cx("btn-side")}>{btn}</span>
     </div>
   );
 }

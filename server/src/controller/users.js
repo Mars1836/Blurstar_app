@@ -32,7 +32,6 @@ const userController = {
         process.env.PW_SECRET_KEY
       ).toString();
       const saveUser = new User(newUser);
-      console.log(saveUser);
       await saveUser.save(function (err) {
         if (err) {
           res.json(err);
@@ -106,7 +105,6 @@ const userController = {
   uploadAvatar: async (req, res) => {
     const image = req.body.image;
     const userId = req.params.userid;
-    console.log("image");
     await cloudinary.uploader.upload(
       image,
       {
@@ -135,10 +133,6 @@ const userController = {
   getFollowing: async (req, res) => {
     const userFollow = req.body.userFollowId;
     const userGetFollow = req.body.userGetFollowId;
-    const isFollowed = await User.findOne({
-      _id: userFollow,
-      following: { $elemMatch: { $eq: userGetFollow } },
-    });
     try {
       const isFollowed = await User.findOne({
         _id: userFollow,
@@ -162,7 +156,6 @@ const userController = {
       }
       res.status(200).json("b");
     } catch (error) {
-      console.log("error");
       res.status(500).json(error);
     }
   },
@@ -186,7 +179,7 @@ const userController = {
         res.status(200).json("unfollow");
         return;
       } else {
-        res.status(200).json("a");
+        res.status(200).json("you haven't followed");
       }
     } catch (error) {
       res.status(500).json(error);

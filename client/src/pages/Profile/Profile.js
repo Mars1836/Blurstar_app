@@ -53,6 +53,7 @@ function Profile() {
         <div className={cx("wapper")}>
           <div className={cx("row")}>
             <div className={cx("col l-8 l-0-2 m-10 m-0-1 c-12")}>
+              {console.log(author, user)}
               <Head author={author} user={user} isAuthor={isAuthor}></Head>
               <div className={cx("tab")}>
                 <div className={cx("line")}></div>

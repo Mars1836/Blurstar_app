@@ -1,8 +1,6 @@
 import styles from "./PostSite.module.scss";
 import classNames from "classnames/bind";
 import { useContext, useEffect, useRef, useState } from "react";
-import Button from "../../../Button/Button";
-import Avatar from "../../../Avatar";
 import { useUser } from "../../../../services/RequireAuth";
 import postRequest from "../../../../httprequest/post";
 import { ModelContext } from "../../Model";
@@ -11,7 +9,6 @@ import socket from "../../../../SocketIO/socket";
 import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
 import { Button as ButtonMaterial } from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import { IconButton } from "@mui/material";
 const cx = classNames.bind(styles);
 function PostSite() {
   const [postDisable, setPostDisable] = useState(true);
@@ -20,16 +17,18 @@ function PostSite() {
   const [dataURL, setDataURL] = useState("");
   const contentInput = useRef(null);
   const { user } = useUser();
-  const { setClose } = useContext(ModelContext);
+  const { handleClose } = useContext(ModelContext);
   useEffect(() => {
     contentInput.current.focus();
     function getDataFromLocalStorage() {
-      let data =
-        localStorage.getItem("postContent") ||
-        JSON.stringify({ cap: "", data: "" });
+      let data = JSON.parse(localStorage.getItem("postContent")) || {
+        cap: "",
+        data: "",
+      };
       let url = localStorage.getItem("dataURL") || "";
-      setPostContent(JSON.parse(data));
+      setPostContent(data);
       setDataURL(url);
+      contentInput.current.value = data.cap;
     }
     getDataFromLocalStorage();
   }, []);
@@ -39,10 +38,7 @@ function PostSite() {
     } else {
       setPostDisable(true);
     }
-    contentInput.current.value = postContent.cap;
-    return () => {
-      localStorage.setItem("postContent", JSON.stringify(postContent));
-    };
+    localStorage.setItem("postContent", JSON.stringify(postContent));
   }, [postContent]);
   useEffect(() => {
     if (dataPost) {
@@ -76,7 +72,7 @@ function PostSite() {
       localStorage.removeItem("dataURL");
     });
 
-    setClose(false);
+    handleClose();
   };
   const handleData = (e) => {
     setDataPost(e.target.files[0]);

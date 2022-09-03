@@ -21,7 +21,6 @@ const addComment = async (postid, comment) => {
     userId: comment.userid,
     content: comment.content,
   });
-  console.log(newComment.data);
   return newComment;
 };
 const likePost = async (postId, userId) => {
@@ -29,7 +28,10 @@ const likePost = async (postId, userId) => {
     userId: userId,
   });
 };
-const removePost = async () => {};
+const removePost = async (id) => {
+  const p = await instance.delete(`${apiRoute.removePost + id}`);
+  return p;
+};
 const editPost = async () => {};
 const getListPosts = async (list) => {
   const posts = await instance.post(`${apiRoute.getListPosts}`, {

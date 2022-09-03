@@ -15,6 +15,8 @@ import imageRouter from "./routes/images.js";
 import resetRouter from "./routes/reset.js";
 //database
 import conn from "./database/mongoose_connect.js";
+import commentRouter from "./routes/comment.js";
+import { isBooleanObject } from "util/types";
 
 const app = express();
 const server = http.createServer(app);
@@ -28,6 +30,7 @@ app.use(cors(corsOption));
 app.use(express.json({ extended: true, limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use("/api/images", verifyToken, imageRouter);
+app.use("/api/comments", verifyToken, commentRouter);
 app.use("/api/groups", verifyToken, groupRouter);
 app.use("/api/posts", verifyToken, postRouter);
 app.use("/api/users", verifyToken, userRouter);
@@ -53,6 +56,18 @@ io.on("connection", (socket) => {
   });
   socket.on("comment", (comment, postId) => {
     io.sockets.emit("get-comment", comment, postId);
+  });
+  socket.on("reply", (comment, commentId) => {
+    io.sockets.emit("get-reply", comment, commentId);
+  });
+  socket.on("remove-comment", (commentId) => {
+    io.sockets.emit("get-remove-comment", commentId);
+  });
+  socket.on("follow-user", (user, mainUser) => {
+    io.sockets.emit("get-follow-user", user, mainUser);
+  });
+  socket.on("unfollow-user", (user, mainUser) => {
+    io.sockets.emit("get-unfollow-user", user, mainUser);
   });
 });
 server.listen(PORT, () => {

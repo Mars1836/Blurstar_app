@@ -13,7 +13,6 @@ const LikeModel = ({ title, listUser }) => {
     });
   }, []);
   const handleClick = (e) => {
-    console.log(users);
     e.stopPropagation();
   };
   return (

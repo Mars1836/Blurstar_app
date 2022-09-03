@@ -19,6 +19,9 @@ function Home() {
     });
   }, []);
   function removePost(id) {
+    postRequest.removePost(id).then(({ data }) => {
+      console.log(data);
+    });
     const index = posts.findIndex((post) => {
       return id === post._id;
     });

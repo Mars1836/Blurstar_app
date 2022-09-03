@@ -10,6 +10,7 @@ const apiRoute = {
   getUsersLike: `/api/users/userslike/`,
   userUploadAvatar: `/api/users/uploadavatar/`,
   follow: `/api/users/follow`,
+  unfollow: `/api/users/unfollow`,
   getUsersByListsId: `/api/users/findlist`,
 };
 const findAll = async () => {
@@ -56,6 +57,13 @@ const follow = async (userFollowId, userGetFollowId) => {
   });
   return res;
 };
+const unfollow = async (userFollowId, userGetFollowId) => {
+  const res = await instance.post(`${apiRoute.unfollow}`, {
+    userFollowId: userFollowId,
+    userGetFollowId: userGetFollowId,
+  });
+  return res;
+};
 const getUsersByListsId = async (list) => {
   const users = await instance.post(`${apiRoute.getUsersByListsId}`, {
     list,
@@ -71,6 +79,7 @@ const userRequest = {
   userUploadAvatar,
   getUserByUsername,
   follow,
+  unfollow,
   getUsersByListsId,
 };
 export default userRequest;

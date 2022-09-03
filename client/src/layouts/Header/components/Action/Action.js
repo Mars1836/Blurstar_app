@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../../services/RequireAuth";
 import Avatar from "../../../../components/Avatar";
 import socket from "../../../../SocketIO/socket";
+import Notification from "~/components/Notification";
 const cx = classNames.bind(styles);
 const Action = () => {
   const cookies = new Cookies();
@@ -45,6 +46,12 @@ const Action = () => {
       action: () => {},
       props: {},
       component: <PostSite />,
+    },
+    {
+      title: "notification",
+      icon: iconHeader.notification,
+      action: () => {},
+      menu: <Notification></Notification>,
     },
   ];
   const userOption = [
@@ -213,6 +220,37 @@ const Action = () => {
           let component = action.component;
           if (currentAction == action.title) {
             icon = action.icon.focus;
+          }
+          if (action.menu) {
+            return (
+              <Menu
+                items={[
+                  {
+                    title: "notification 1",
+                  },
+                  {
+                    title: "notification 2",
+                  },
+                  {
+                    title: "notification 3",
+                  },
+                ]}
+                onHide={handleActionStop}
+              >
+                <Button
+                  key={index}
+                  {...action.props}
+                  onClick={() => {
+                    handleCurrentAction(action.title);
+                    action.action();
+                  }}
+                  dialog={component}
+                  componentOnHide={handleActionStop}
+                >
+                  {icon}
+                </Button>
+              </Menu>
+            );
           }
           return (
             <Button

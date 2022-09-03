@@ -2,7 +2,7 @@ import { useUser } from "../../../../services/RequireAuth.js";
 import styles from "./Post.module.scss";
 import Avatar from "../../../../components/Avatar/Avatar.js";
 import classNames from "classnames/bind";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, createRef } from "react";
 import AvatarName from "../../../../components/Avatar/Inherit/AvatarName/AvatarName.js";
 import Comment from "./Comment.js";
 import userRequest from "../../../../httprequest/user.js";
@@ -21,15 +21,25 @@ import EditIcon from "@mui/icons-material/Edit";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import HideSourceRoundedIcon from "@mui/icons-material/HideSourceRounded";
 import LoadingComment from "~/components/Loading/LoadingComment/index.js";
+import CommentInput from "../CommentInput/CommentInput.js";
+import commentRequest from "~/httprequest/comment.js";
+import Text from "./Text.js";
 const cx = classNames.bind(styles);
 function Post({ data, remove }) {
   const { user } = useUser();
+  const [post, setPost] = useState(data);
   const [author, setAuthor] = useState();
   const [comments, setComments] = useState(null);
   const [isCommentMount, setIsCommentMount] = useState(false);
   const [liked, setLiked] = useState(false);
   const [date, setDate] = useState("");
   const [isLoadingComment, setIsLoadingComment] = useState(true);
+  const [isShowAllCap, setIsShowAllCap] = useState(false);
+  const [commentPage, setCommentPage] = useState(1);
+  const inputComment = createRef();
+  let text = useRef("");
+  let text2 = useRef("");
+  const limitComment = 4;
   const isAuthor = data.author === user?._id;
   useEffect(() => {
     setLiked(data.likes.includes(user?._id));
@@ -38,11 +48,26 @@ function Post({ data, remove }) {
     userRequest.findById(data.author).then(({ data }) => {
       setAuthor(data);
     });
-    setComments(data.comments);
-    postContent.current.innerText = data.content.cap;
+    let cap = data.content.cap;
+    let characterLimit = 250;
+    let lineLimit = 4;
+    let indexline = getIndex("\n", cap, lineLimit);
+    text.current = cap.slice(0, characterLimit);
+    if (indexline > 0) {
+      text.current = cap.slice(0, indexline);
+      text2.current = cap.slice(indexline, cap.length);
+    } else {
+      text.current = cap.slice(0, characterLimit);
+      text2.current = cap.slice(characterLimit, cap.length);
+    }
     socket.on("get-comment", (comment, postId) => {
       if (data._id === postId) {
+        console.log(comment);
         setComments((comments) => [comment, ...comments]);
+        setPost((post) => {
+          return { ...post, comments: [comment._id, ...post.comments] };
+        });
+        console.log(post);
       }
     });
     setDate(getDate());
@@ -53,43 +78,29 @@ function Post({ data, remove }) {
       clearInterval(rsDate);
     };
   }, []);
-  const postContent = useRef(null);
-
-  const commentInput = useRef(null);
-  let keyPress = [];
-  const handleFocus = () => {
-    keyPress = [];
-  };
-  const handleKeyDown = (e) => {
-    if (
-      !keyPress.find((item) => e.key === item) &&
-      (e.key === "Shift" || e.key === "Enter")
-    ) {
-      keyPress.push(e.key);
-    }
-  };
-  const handleKeyUp = (e) => {
-    keyPress = keyPress.filter((item) => {
-      return item !== e.key;
-    });
-  };
-  const handleSubmit = (e) => {
-    let cmt = e.target.innerText.trim();
-    if (keyPress[0] === "Enter" && cmt !== "") {
-      e.preventDefault();
-      let newComment = {
-        userid: user._id,
-        content: cmt,
-      };
-      let postId = data._id;
-      postRequest.addComment(data._id, newComment).then(({ data }) => {
-        socket.emit("comment", data, postId);
+  useEffect(() => {
+    commentRequest
+      .getListComment(data.comments, -1, commentPage, limitComment)
+      .then(({ data }) => {
+        if (comments !== null) {
+          setComments([...comments, ...data]);
+        } else {
+          setComments(data);
+        }
       });
-      e.target.innerText = "";
-    } else if (keyPress[0] === "Enter" && cmt === "") {
-      e.preventDefault();
+  }, [commentPage]);
+  const postContent = useRef(null);
+  function getIndex(char, string, index) {
+    if (index === 1) {
+      return string.indexOf(char);
     }
-  };
+    let i = getIndex(char, string, index - 1) + 1;
+    if (i > 0) {
+      return string.indexOf(char, i);
+    } else {
+      return -1;
+    }
+  }
   function getDate(short = 1) {
     if (short) {
       const options = {
@@ -160,6 +171,13 @@ function Post({ data, remove }) {
       },
     },
   ];
+
+  function removeFromListParent(id) {
+    const arr = comments.filter((comment) => {
+      return comment._id !== id;
+    });
+    setComments(arr);
+  }
   return (
     <div className={cx("post")}>
       <div className={cx("post-item")}>
@@ -186,7 +204,25 @@ function Post({ data, remove }) {
           </Menu>
         </div>
         <div className={cx("cap")}>
-          <span className={cx("post-content")} ref={postContent}></span>
+          <span className={cx("post-content")} ref={postContent}>
+            <Text text={text.current}></Text>
+            {text2.current && (
+              <>
+                {isShowAllCap ? (
+                  <Text text={text2.current}></Text>
+                ) : (
+                  <Button
+                    style={{ color: "#ba2121", display: "inline-block" }}
+                    onClick={() => {
+                      setIsShowAllCap(true);
+                    }}
+                  >
+                    ...See more
+                  </Button>
+                )}
+              </>
+            )}
+          </span>
         </div>
         {data.content.data && (
           <div className={cx("wapper-image")}>
@@ -197,41 +233,30 @@ function Post({ data, remove }) {
           like={liked}
           likes={data.likes}
           user={user}
+          inputComment={inputComment}
           postId={data._id}
           setLike={setLiked}
-          commentInput={commentInput}
-          commentsQuantity={comments?.length}
+          commentsQuantity={post?.comments.length}
           handleCommentMount={{ setIsCommentMount, isCommentMount }}
         />
         {isCommentMount && (
           <div className={cx("comment-site")}>
-            <div className={cx("comment-input-wrapper")}>
-              <Avatar size={35} user={user}></Avatar>
-              <div className={cx("comment-input-container")}>
-                <span
-                  ref={commentInput}
-                  contentEditable
-                  placeholder="write a comment"
-                  className={cx("comment-input")}
-                  onKeyDown={(e) => {
-                    handleKeyDown(e);
-                    handleSubmit(e);
-                  }}
-                  onKeyUp={(e) => {
-                    handleKeyUp(e);
-                  }}
-                  onFocus={handleFocus}
-                ></span>
-              </div>
-            </div>
+            <CommentInput
+              user={user}
+              post={data}
+              ref={inputComment}
+              postId={post._id}
+            ></CommentInput>
             <div className={cx("comment-users")}>
               {comments !== null && (
                 <>
                   {comments.map((comment, index) => {
                     return (
                       <Comment
+                        mainUser={user}
                         data={comment}
                         key={comment._id}
+                        getRemove={removeFromListParent}
                         setLoading={setIsLoadingComment}
                         setLoadingComment={
                           index === comments.length - 1
@@ -249,6 +274,36 @@ function Post({ data, remove }) {
                 </>
               )}
             </div>
+            {post?.comments.length > comments.length && (
+              <div className={cx("loadmore")}>
+                <Button
+                  underline={1}
+                  onClick={() => {
+                    setCommentPage(commentPage + 1);
+                  }}
+                >
+                  View more comments
+                </Button>
+                <p>
+                  {comments?.length} of {post?.comments.length}
+                </p>
+              </div>
+            )}
+
+            {comments?.length > 5 && (
+              <Button
+                underline={1}
+                onClick={() => {
+                  inputComment.current?.focus({ preventScroll: true });
+                  inputComment.current?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center",
+                  });
+                }}
+              >
+                Write a comment...
+              </Button>
+            )}
           </div>
         )}
       </div>

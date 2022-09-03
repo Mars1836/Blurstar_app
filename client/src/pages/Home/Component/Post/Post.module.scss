@@ -31,7 +31,7 @@
     .post-content {
       width: 100%;
       margin-top: 10px;
-      display: block;
+      display: inline-block;
       word-wrap: break-word;
     }
   }
@@ -98,37 +98,24 @@
   .comment-site {
     padding: 10px;
     // display: inline-flex;
-
-    .comment-input-wrapper {
-      display: flex;
-      margin-top: 10px;
-      gap: 10px;
-      div {
-        align-self: flex-start;
-      }
-    }
-    .comment-input-container {
-      flex: 1;
-      display: flex;
-      margin-bottom: 20px;
-    }
-    .comment-input {
-      line-height: 14px;
-      padding: 8px;
-      width: 100%;
-      background-color: rgba($color: #000000, $alpha: 0.06);
-      resize: none;
-      width: 100px;
-      min-width: 100%;
-      max-width: 100%;
-      outline: none;
-      border: none;
-      border-radius: 10px;
+    .option {
+      background-color: red;
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      display: inline-block;
     }
     .comment-users {
       display: flex;
       flex-direction: column;
       gap: 10px;
+    }
+    .loadmore {
+      display: flex;
+      justify-content: space-between;
+      p {
+        color: var(--ig-secondary-text);
+      }
     }
   }
 }
@@ -141,6 +128,17 @@
 .comment-input:empty:before {
   content: attr(placeholder);
   color: #888;
+}
+.comment-wapper {
+  width: 100%;
+  position: relative;
+  .reply {
+    margin-left: 40px;
+    position: relative;
+  }
+  .reply-btn {
+    margin-left: 30px;
+  }
 }
 //animation
 @keyframes like-animation {

@@ -13,6 +13,7 @@ const Button = React.forwardRef(
       className,
       dialog,
       onClick,
+      underline,
       componentOnHide,
       text,
       ...props
@@ -39,6 +40,7 @@ const Button = React.forwardRef(
           }
           setShowDialog(true);
         }}
+        underline={underline}
         {...props}
       >
         {children}

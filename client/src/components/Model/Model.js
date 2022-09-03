@@ -23,14 +23,17 @@ const Model = ({ conponent, setClose, onClose, children }) => {
       enable();
     };
   }, []);
+  function handleClose() {
+    onClose();
+    setClose(false);
+  }
   return ReactDOM.createPortal(
-    <ModelContext.Provider value={{ setClose }}>
+    <ModelContext.Provider value={{ handleClose }}>
       <div
         className={cx("model-wrapper")}
         onClick={(e) => {
           e.stopPropagation();
-          onClose();
-          setClose(false);
+          handleClose();
         }}
       >
         {children}

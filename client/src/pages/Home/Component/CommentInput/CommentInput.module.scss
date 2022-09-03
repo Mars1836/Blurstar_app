@@ -1,0 +1,26 @@
+.comment-input-wrapper {
+  display: flex;
+  margin-top: 10px;
+  gap: 10px;
+  div {
+    align-self: flex-start;
+  }
+}
+.comment-input-container {
+  flex: 1;
+  display: flex;
+  margin-bottom: 20px;
+}
+.comment-input {
+  line-height: 14px;
+  padding: 8px;
+  width: 100%;
+  background-color: rgba($color: #000000, $alpha: 0.06);
+  resize: none;
+  width: 100px;
+  min-width: 100%;
+  max-width: 100%;
+  outline: none;
+  border: none;
+  border-radius: 10px;
+}

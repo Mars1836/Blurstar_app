@@ -1,7 +1,6 @@
 import styles from "./Post.module.scss";
 import classNames from "classnames/bind";
-import { HiThumbUp, HiOutlineThumbUp } from "react-icons/hi";
-import { BiCommentDetail } from "react-icons/bi";
+
 import { IconContext } from "react-icons/lib";
 import postRequest from "../../../../httprequest/post";
 import { useEffect, useState } from "react";
@@ -13,10 +12,10 @@ function Interaction({
   like,
   postId,
   setLike,
+  inputComment,
   user,
   likes,
   commentsQuantity,
-  commentInput,
   handleCommentMount,
 }) {
   const [isLiked, setIsLiked] = useState(like);
@@ -30,6 +29,9 @@ function Interaction({
   useEffect(() => {
     setIsLiked(like);
   }, [like]);
+  useEffect(() => {
+    if (inputComment.current) inputComment.current.focus();
+  }, [handleCommentMount.isCommentMount]);
   const handleLike = async () => {
     await postRequest.likePost(postId, user._id);
     setIsLiked(!isLiked);
@@ -37,9 +39,7 @@ function Interaction({
   };
   const handleComment = () => {
     handleCommentMount.setIsCommentMount(true);
-    if (commentInput.current) {
-      commentInput.current.focus();
-    }
+    if (inputComment.current) inputComment.current.focus();
   };
   return (
     <>

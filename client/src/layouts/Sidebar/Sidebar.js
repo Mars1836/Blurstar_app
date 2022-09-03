@@ -7,20 +7,21 @@ import AvatarBox from "~/components/Avatar/Inherit/AvatarBox";
 import Button from "~/components/Button";
 import userRequest from "~/httprequest/user";
 import { useState } from "react";
+import UserItem from "./UserItem";
 const cx = classNames.bind(styles);
 function Sidebar() {
-  const { user } = useUser();
+  const { user: mainUser } = useUser();
   const [users, setUsers] = useState();
   useEffect(() => {
-    if (user) {
-      userRequest.findExceptId(user?._id).then(({ data }) => {
+    if (mainUser) {
+      userRequest.findExceptId(mainUser?._id).then(({ data }) => {
         setUsers(data);
       });
     }
-  }, [user]);
+  }, [mainUser]);
   return (
     <div className={cx("wrapper")}>
-      <AvatarBox user={user} action={"Switch"} avtLarge></AvatarBox>
+      <AvatarBox user={mainUser} action={"Switch"} avtLarge></AvatarBox>
       <div className={cx("title-suggest")}>
         <p className={cx("text-1")}>Suggestions For You</p>
         <Button className={cx("text-2")}>Xem tất cả</Button>
@@ -30,11 +31,11 @@ function Sidebar() {
           <>
             {users.map((user) => {
               return (
-                <AvatarBox
+                <UserItem
+                  mainUser={mainUser}
                   user={user}
                   key={user._id}
-                  action={"Follow"}
-                ></AvatarBox>
+                ></UserItem>
               );
             })}
           </>

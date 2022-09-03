@@ -3,8 +3,24 @@
   align-items: center;
   gap: 10px;
 }
+.wrapper:hover .option {
+  opacity: 1;
+  pointer-events: all;
+}
+.option {
+  position: absolute;
+  top: 50%;
+  right: -8px;
+  transform: translate(100%, -50%);
+  opacity: 0;
+  pointer-events: none;
+}
+
 .avatar {
   align-self: start;
+}
+.container {
+  width: 100%;
 }
 .content {
   display: block;
@@ -17,6 +33,7 @@
   padding: 4px 8px;
   border-radius: 10px;
   max-width: 90%;
+  width: fit-content;
   position: relative;
 }
 .user-name {

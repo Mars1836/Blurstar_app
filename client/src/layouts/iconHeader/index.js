@@ -1,3 +1,5 @@
+import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 const home = {
   blur: (
     <svg
@@ -140,4 +142,10 @@ const post = {
     </svg>
   ),
 };
-export default { home, inbox, post };
+const notification = {
+  blur: (
+    <NotificationsNoneIcon sx={{ fontSize: "28px" }}></NotificationsNoneIcon>
+  ),
+  focus: <NotificationsIcon sx={{ fontSize: "28px" }}></NotificationsIcon>,
+};
+export default { home, inbox, post, notification };

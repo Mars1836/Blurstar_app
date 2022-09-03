@@ -35,7 +35,7 @@ function RequireAuth({ children }) {
   }, [reload]);
 
   return (
-    <UserContext.Provider value={{ user, setReload }}>
+    <UserContext.Provider value={{ user, setUser, setReload }}>
       {loading || children}
     </UserContext.Provider>
   );

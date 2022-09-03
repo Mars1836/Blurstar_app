@@ -2,6 +2,7 @@ import Post from "../models/post.js";
 import Comment from "../models/comment.js";
 import cloudinary from "../database/cloudinary.js";
 import User from "../models/user.js";
+import commentController from "./comment.js";
 const postController = {
   getAll: async (req, res) => {
     try {
@@ -22,7 +23,6 @@ const postController = {
   },
   findList: async (req, res) => {
     const list = req.body.listId;
-    console.log(list);
     try {
       const posts = await Post.find({ _id: { $in: list } });
       res.status(200).json(posts);
@@ -76,21 +76,22 @@ const postController = {
       userid: req.body.userId,
       content: req.body.content,
     });
+    const commentM = await commentController.create(newComment);
     try {
-      const postUpdate = await Post.updateOne(
+      await Post.updateOne(
         {
           _id: id,
         },
         {
           $push: {
             comments: {
-              $each: [newComment],
+              $each: [newComment._id],
               $position: 0,
             },
           },
         }
       );
-      res.json(newComment);
+      res.status(200).json(commentM);
     } catch (error) {
       res.status(500).json(error);
     }
@@ -103,18 +104,29 @@ const postController = {
         (id) => id.toString() === req.body.userId
       );
       if (isexist) {
-        await Post.update({ $pull: { likes: req.body.userId } });
+        await Post.updateOne({ $pull: { likes: req.body.userId } });
         res.json("dislike");
         return;
       }
 
-      const like = await Post.update(
+      const like = await Post.updateOne(
         {
           _id: id,
         },
         { $push: { likes: req.body.userId } }
       );
       res.status(200).json("like");
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
+  remove: async (req, res) => {
+    const postid = req.params.id;
+    try {
+      const post = await Post.findOne({ _id: postid });
+      await post.deleteOne();
+
+      res.status(200).json("remove post");
     } catch (error) {
       res.status(500).json(error);
     }
