@@ -14,11 +14,15 @@ const auth = {
         );
         const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
         if (originalPassword === password) {
-          const token = jwt.sign(user.toJSON(), process.env.TOKEN_SECRET_KEY, {
-            expiresIn: "3h",
-          });
+          const token = jwt.sign(
+            { id: user._id },
+            process.env.TOKEN_SECRET_KEY,
+            {
+              expiresIn: "3h",
+            }
+          );
           const refreshToken = jwt.sign(
-            user.toJSON(),
+            { id: user._id },
             process.env.REFRESHTOKEN_SECRET_KEY
           );
           res.json({
@@ -32,6 +36,7 @@ const auth = {
         res.status(401).json("username or password is wrong");
       }
     } catch (error) {
+      console.log(error);
       res.status(500).json(error);
     }
   },

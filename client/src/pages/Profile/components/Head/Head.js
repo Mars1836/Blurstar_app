@@ -6,11 +6,11 @@ import "~/styles/grid.css";
 import userRequest from "~/httprequest/user";
 import Button from "~/components/Button";
 import SetAvatar from "~/components/Model/components/SetAvatar";
-import { useLayoutEffect } from "react";
 import LikeModel from "~/components/Model/components/Like/LikeModel";
 import UnfollowBtn from "~/components/FollowBtn/UnfollowBtn";
 import FollowBtn from "~/components/FollowBtn/FollowBtn";
 import socket from "~/SocketIO/socket";
+import { useSelector } from "react-redux";
 const cx = classNames.bind(styles);
 const border = {
   border: "1px solid #DBDBDB",
@@ -31,29 +31,31 @@ const fill = {
   color: "#fff",
   background: "var(--blue-3)",
 };
-const Head = ({ user, author, isAuthor }) => {
-  const [isFollowing, setIsFollowing] = useState("");
+const Head = ({ author, isAuthor }) => {
+  const userFollowing = useSelector((state) => state.mainUser?.data?.following);
+  const isFollowing = useSelector((state) => {
+    const following = state.mainUser.data?.following;
+    if (following) {
+      return following.includes(author?._id);
+    }
+  });
   const [followers, setFollowers] = useState(author?.followers);
   const [following, setFollowing] = useState(author?.following);
   useEffect(() => {
-    socket.on("get-follow-user", (user, mainUser) => {
-      if (author._id === user._id) {
-        setFollowers([mainUser._id, ...followers]);
+    socket.on("get-follow-user", (userId, mainUserId) => {
+      if (author?._id === userId) {
+        setFollowers([mainUserId, ...followers]);
       }
     });
-    socket.on("get-unfollow-user", (user, mainUser) => {
-      if (author._id === user._id) {
+    socket.on("get-unfollow-user", (userId, mainUserId) => {
+      if (author?._id === userId) {
         const newfollers = followers.filter((follower) => {
-          return follower._id !== mainUser._id;
+          return follower._id !== mainUserId;
         });
         setFollowers(newfollers);
       }
     });
   }, []);
-  useLayoutEffect(() => {
-    setIsFollowing(user?.following.includes(author?._id));
-    console.log(user?.following);
-  }, [author, user]);
   useEffect(() => {
     setFollowers(author?.followers);
     setFollowing(author?.following);
@@ -67,7 +69,12 @@ const Head = ({ user, author, isAuthor }) => {
       <div className={cx("avatar-container")}>
         <div className={cx("avatar")}>
           <Button dialog={<SetAvatar></SetAvatar>}>
-            <Avatar user={author} size={150} link={0}></Avatar>
+            <Avatar
+              username={author?.name}
+              url={author?.avatar}
+              size={150}
+              link={0}
+            ></Avatar>
           </Button>
         </div>{" "}
         <div className={cx("side-avatar")}>
@@ -115,11 +122,7 @@ const Head = ({ user, author, isAuthor }) => {
                   <>
                     <UnfollowBtn
                       style={border}
-                      mainUser={user}
-                      user={author}
-                      action={() => {
-                        setIsFollowing(false);
-                      }}
+                      author={author}
                       text={
                         <svg
                           aria-label="Following"
@@ -141,11 +144,7 @@ const Head = ({ user, author, isAuthor }) => {
                     <FollowBtn
                       style={fill}
                       text={"Follow"}
-                      mainUser={user}
-                      user={author}
-                      action={() => {
-                        setIsFollowing(true);
-                      }}
+                      author={author}
                     ></FollowBtn>
                   </>
                 )}
@@ -153,7 +152,7 @@ const Head = ({ user, author, isAuthor }) => {
             )}
           </div>
           <div className={cx("parameter")}>
-            <span>{author?.posts.length} posts</span>
+            <span>{author?.posts?.length} posts</span>
             <Button
               dialog={
                 <LikeModel
@@ -162,7 +161,7 @@ const Head = ({ user, author, isAuthor }) => {
                 ></LikeModel>
               }
             >
-              {followers.length} followers
+              {followers?.length} followers
             </Button>
             <Button
               dialog={
@@ -172,7 +171,7 @@ const Head = ({ user, author, isAuthor }) => {
                 ></LikeModel>
               }
             >
-              {following.length} following
+              {following?.length} following
             </Button>
           </div>
           <h2 className={cx("name")}>{author?.name}</h2>

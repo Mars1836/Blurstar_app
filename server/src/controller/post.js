@@ -53,7 +53,7 @@ const postController = {
     }
     newPost.save(async function (err) {
       if (err) {
-        res.json(err);
+        res.status(500).json(err);
         return;
       }
       try {
@@ -64,10 +64,11 @@ const postController = {
           }
         );
       } catch (error) {
-        res.json(error);
+        res.status(500).json(error);
         return;
       }
-      res.json(newPost);
+      console.log(newPost);
+      res.status(200).json(newPost);
     });
   },
   addComment: async (req, res) => {
@@ -96,28 +97,35 @@ const postController = {
       res.status(500).json(error);
     }
   },
-  handleLike: async (req, res) => {
+  like: async (req, res) => {
     const id = req.params.id; //id post
     try {
-      const post = await Post.findById(id);
-      const isexist = post?.likes.find(
-        (id) => id.toString() === req.body.userId
-      );
-      if (isexist) {
-        await Post.updateOne({ $pull: { likes: req.body.userId } });
-        res.json("dislike");
-        return;
-      }
-
       const like = await Post.updateOne(
         {
           _id: id,
         },
         { $push: { likes: req.body.userId } }
       );
+      const npost = await Post.find({ _id: id });
       res.status(200).json("like");
     } catch (error) {
       res.status(500).json(error);
+    }
+  },
+  unlike: async (req, res) => {
+    const id = req.params.id; //id post
+    try {
+      const post = await Post.updateOne(
+        { _id: id },
+        {
+          $pullAll: { likes: [req.body.userId] },
+        }
+      );
+
+      res.json("dislike");
+    } catch (error) {
+      console.log(error);
+      res.status(400).json(error);
     }
   },
   remove: async (req, res) => {
@@ -126,10 +134,18 @@ const postController = {
       const post = await Post.findOne({ _id: postid });
       await post.deleteOne();
 
-      res.status(200).json("remove post");
+      res.status(200).json({ removed: postid });
     } catch (error) {
       res.status(500).json(error);
     }
+  },
+  getRecommendPostId: async (req, res) => {
+    const postIds = await Post.find({}).select("_id").sort({ $natural: -1 });
+    res.status(200).json(
+      postIds.map((postId) => {
+        return postId._id;
+      })
+    );
   },
 };
 export default postController;

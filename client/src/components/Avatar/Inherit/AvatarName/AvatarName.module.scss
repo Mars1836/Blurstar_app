@@ -18,7 +18,7 @@
 .user-name {
   font-size: 1.7rem;
   font-weight: 400;
-  &:hover {
-    text-decoration: underline;
-  }
+}
+.user-name[underline]:hover {
+  text-decoration: underline;
 }

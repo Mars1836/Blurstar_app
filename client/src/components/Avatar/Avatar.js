@@ -3,19 +3,19 @@ import classNames from "classnames/bind";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 const cx = classNames.bind(styles);
-function Avatar({ size, user, link }) {
+function Avatar({ size, url, username, link }) {
   let Comp = "div";
   if (link) {
     Comp = Link;
   }
   return (
     <div className={cx("wrapper")}>
-      <Comp to={!link ? "" : `/profile/${user?.username}`}>
+      <Comp to={!link ? "" : `/profile/${username}`}>
         <img
           width={size || 40}
           height={size || 40}
           className={cx("avatar")}
-          src={user?.avatar || `${process.env.PUBLIC_URL + "/avtdf.png"}`}
+          src={url || `${process.env.PUBLIC_URL + "/avtdf.png"}`}
         ></img>
       </Comp>
     </div>

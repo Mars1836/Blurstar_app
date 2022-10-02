@@ -1,0 +1,83 @@
+.noti_header {
+  width: 100%;
+}
+.noti_title {
+  display: flex;
+  margin: 15px auto 5px 15px;
+}
+.noti_title_text {
+  font-weight: 500;
+  margin: 0;
+}
+.noti_options {
+  margin-left: auto;
+  width: fit-content;
+  display: inline-block;
+}
+.noti_filter {
+  margin: 0 auto 5px 15px;
+}
+
+.noti_filter_button {
+  font-size: 1.1em;
+  padding: 6px 8px;
+
+  border-radius: 15px;
+  &:hover {
+    background-color: rgba($color: #0000005d, $alpha: 0.06);
+  }
+}
+.active {
+  color: var(--light-red);
+  position: relative;
+}
+.active::before {
+  content: "";
+  position: absolute;
+  border-radius: inherit;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: currentColor;
+  opacity: 0.2;
+}
+.noti_item_wrapper {
+  display: flex;
+  gap: 10px;
+  user-select: none;
+  width: 100%;
+  min-height: 66px;
+  border-radius: 4px;
+}
+.noti_list_items {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.noti_item_wrapper {
+  padding: 0 15px 0;
+  &:hover {
+    background-color: rgba($color: #0000005d, $alpha: 0.06);
+  }
+}
+.noti_item_content {
+  display: block;
+  font-weight: 350;
+  width: 100%;
+  font-size: 1.05em;
+  color: var(--ig-secondary-text);
+}
+.noti_item_username {
+  color: #000;
+}
+.noti_item_time {
+  font-weight: 350;
+  font-size: 0.85em;
+  color: var(--ig-secondary-text);
+}
+.noti_item_status {
+  width: 11px;
+  height: 8px;
+  border-radius: 10px;
+}

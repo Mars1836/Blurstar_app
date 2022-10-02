@@ -4,6 +4,8 @@ import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import socket from "../SocketIO/socket";
 import userRequest from "../httprequest/user";
 import { createContext } from "react";
+import { useDispatch } from "react-redux";
+import { mainUserApiAction } from "~/store/actions/mainUserAction";
 const UserContext = createContext(null);
 function RequireAuth({ children }) {
   const [user, setUser] = useState();
@@ -11,6 +13,7 @@ function RequireAuth({ children }) {
   const [reload, setReload] = useState(0);
   const navigate = useNavigate();
   const instance = useAxiosPrivate();
+  const dispatch = useDispatch();
   useEffect(() => {
     instance
       .post(`/auth/token`)
@@ -18,13 +21,8 @@ function RequireAuth({ children }) {
         return data;
       })
       .then(({ user }) => {
-        userRequest.findById(user._id).then(({ data }) => {
-          setUser(data);
-          console.log(1);
-          socket.on("sv-click", () => {
-            console.log("connected");
-          });
-        });
+        dispatch(mainUserApiAction.loginFetchApi(user.id));
+        socket.emit("set-user-id", user.id);
       })
       .catch((err) => {
         navigate("/login");

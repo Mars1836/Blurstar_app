@@ -4,13 +4,19 @@ import Search from "./components/Search";
 import Action from "./components/Action";
 import Logo from "../../components/Logo/Logo";
 import Button from "../../components/Button/Button";
+import history from "history/browser";
 const cx = classNames.bind(styles);
 function Header() {
   return (
     <div className={cx("header")}>
       <div className={cx("wrapper")}>
         <div className={cx("logo")}>
-          <Button href="/">
+          <Button
+            onClick={() => {
+              console.log("click");
+              history.back();
+            }}
+          >
             <Logo large={130}></Logo>
           </Button>
         </div>

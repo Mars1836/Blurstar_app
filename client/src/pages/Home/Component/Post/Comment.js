@@ -16,11 +16,10 @@ function Comment({
   setLoadingComment,
   avtSize = 35,
   isReply = false,
-  mainUser,
 }) {
   const inputComment = createRef();
   const [comment, setComment] = useState(data);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState(null);
   const [comments, setComments] = useState(null);
   const [isShowReply, setIsShowReply] = useState(false);
@@ -40,6 +39,9 @@ function Comment({
     socket.on("get-reply", (comment, commentId) => {
       if (data._id === commentId) {
         setComments((comments) => [...comments, comment]);
+        setComment((pre) => {
+          return { ...pre, comments: [...pre.comments, comment._id] };
+        });
       }
     });
     socket.on("get-remove-comment", (commentId) => {
@@ -151,7 +153,6 @@ function Comment({
                         data={cm}
                         avtSize={30}
                         isReply={true}
-                        mainUser={mainUser}
                         getRemove={removeFromListParent}
                       ></Comment>
                     </div>
@@ -195,11 +196,7 @@ function Comment({
                     borderBottom: "2px solid #F0F2F5",
                   }}
                 ></div>
-                <CommentInput
-                  user={mainUser}
-                  comment={data}
-                  ref={inputComment}
-                ></CommentInput>
+                <CommentInput comment={data} ref={inputComment}></CommentInput>
               </div>
             </div>
           )}

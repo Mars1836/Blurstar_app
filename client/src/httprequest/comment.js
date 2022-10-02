@@ -1,6 +1,7 @@
 import configs from "../configs";
 import instance from "../configs/axios";
 import axios from "axios";
+import socket from "~/SocketIO/socket";
 const apiRoute = {
   getCommentById: `/api/comments/`,
   getAllComment: `/api/comments`,
@@ -8,7 +9,7 @@ const apiRoute = {
   addComment: `/api/comments/addcomment/`,
   removeComment: `/api/comments/`,
 };
-
+const notifications = { configs };
 const commentRequest = {
   getCommentById: () => {},
   getAllComment: () => {},
@@ -26,12 +27,18 @@ const commentRequest = {
       userid: newComment.userid,
       content: newComment.content,
     });
+    socket.emit("reply", comment.data, commentId);
+    socket.emit("notification", notifications.commentPost, {
+      target: commentId,
+      from: newComment.userid,
+    });
     return comment;
   },
   removeComment: async (commentId) => {
     const comment = await instance.delete(
       `${apiRoute.removeComment + commentId}`
     );
+    socket.emit("remove-comment", commentId);
     return comment;
   },
 };

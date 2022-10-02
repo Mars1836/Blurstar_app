@@ -1,7 +1,7 @@
 import configs from "../configs";
 import axios from "axios";
 import instance from "../configs/axios";
-const apiRoute = {
+export const apiRoute = {
   login: `/auth/login`,
   register: `/user`,
 };

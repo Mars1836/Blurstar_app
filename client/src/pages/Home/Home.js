@@ -1,43 +1,32 @@
 import styles from "./Home.module.scss";
 import classNames from "classnames/bind";
 import Post from "./Component/Post/Post.js";
-import postRequest from "../../httprequest/post.js";
 import { useEffect, useState } from "react";
-import socket from "../../SocketIO/socket.js";
 import "~/styles/grid.css";
 import Sidebar from "~/layouts/Sidebar/Sidebar.js";
+import { postApiAction } from "~/store/actions/postAction";
+import { useDispatch, useSelector } from "react-redux";
 const cx = classNames.bind(styles);
 
 function Home() {
-  const [posts, setPosts] = useState([]);
+  const userId = useSelector((state) => {
+    return state.mainUser._id;
+  });
+  const dispatch = useDispatch();
+  const suggestedPosts = useSelector((state) => {
+    return state.posts.suggested;
+  });
   useEffect(() => {
-    postRequest.getAll().then(({ data }) => {
-      setPosts(data);
-    });
-    socket.on("get-post", (newPost) => {
-      setPosts((posts) => [newPost, ...posts]);
-    });
+    dispatch(postApiAction.fetchGetSuggestedPost(userId));
   }, []);
-  function removePost(id) {
-    postRequest.removePost(id).then(({ data }) => {
-      console.log(data);
-    });
-    const index = posts.findIndex((post) => {
-      return id === post._id;
-    });
-    let newPost = [...posts];
-    newPost.splice(index, 1);
-    setPosts(newPost);
-  }
+
   return (
     <div className={[cx("wrapper", "grid")]}>
       <div className={cx("row center")}>
         <div className={cx("col l-4 m-8 c-12")}>
           <div className={cx("post-site")}>
-            {posts.map((post) => {
-              return (
-                <Post data={post} key={post._id} remove={removePost}></Post>
-              );
+            {suggestedPosts.map((id) => {
+              return <Post postid={id} key={id}></Post>;
             })}
             <div className={cx("st")}></div>
           </div>

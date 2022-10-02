@@ -2,7 +2,7 @@ import User from "../models/user.js";
 import Post from "../models/post.js";
 import CryptoJS from "crypto-js";
 import cloudinary from "../database/cloudinary.js";
-import mongoose from "mongoose";
+import { v4 as uuidv4 } from "uuid";
 const userController = {
   findAll: async (req, res) => {
     try {
@@ -123,7 +123,7 @@ const userController = {
               },
             }
           );
-          res.status(200).json("updated avatar");
+          res.status(200).json(result.url);
         } catch (err) {
           res.status(500).json(err);
         }
@@ -151,7 +151,7 @@ const userController = {
             $push: { followers: userFollow },
           }
         );
-        res.status(200).json("followed");
+        res.status(200).json({ following: userGetFollow });
         return;
       }
       res.status(200).json("b");
@@ -176,7 +176,7 @@ const userController = {
           { _id: userGetFollow },
           { $pull: { followers: { $eq: userFollow } } }
         );
-        res.status(200).json("unfollow");
+        res.status(200).json({ following: userGetFollow });
         return;
       } else {
         res.status(200).json("you haven't followed");
@@ -184,6 +184,43 @@ const userController = {
     } catch (error) {
       res.status(500).json(error);
     }
+  },
+  addNotification: async (req, res) => {
+    try {
+      const notification = {
+        ...req.body,
+        seen: false,
+        createAt: new Date(),
+        id: uuidv4(),
+      };
+      console.log(notification);
+      const id = req.params.id;
+      const noti = await User.updateOne(
+        { _id: id },
+        {
+          $push: {
+            notifications: { $each: [notification], $slice: -15, $position: 0 },
+          },
+        }
+      );
+      res.status(200).json(notification);
+    } catch (error) {
+      res.status(500).json(new Error(error));
+    }
+  },
+  seenNotification: async (req, res) => {
+    const userId = req.body.userId;
+    const notifications = req.body.notifications;
+    const update = await User.updateMany(
+      {
+        _id: userId,
+      },
+      { "notifications.$[filter].seen": true },
+      {
+        arrayFilters: [{ "filter.id": { $eq: notifications } }],
+      }
+    );
+    res.status(200).json(update);
   },
 };
 export default userController;

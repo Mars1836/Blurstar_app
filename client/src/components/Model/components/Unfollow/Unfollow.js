@@ -5,7 +5,7 @@ import Avatar from "~/components/Avatar";
 import { ModelContext } from "../../Model";
 import { useContext } from "react";
 const cx = classNames.bind(styles);
-function Unfollow({ user, handleUnFollow, text = "Unfollow" }) {
+function Unfollow({ author, handleUnFollow, text = "Unfollow" }) {
   const model = useContext(ModelContext);
   return (
     <div
@@ -14,8 +14,13 @@ function Unfollow({ user, handleUnFollow, text = "Unfollow" }) {
         e.stopPropagation();
       }}
     >
-      <Avatar user={user} size={80} link={0}></Avatar>
-      <p className={cx("text")}>Leave @{user?.username}?</p>
+      <Avatar
+        username={author.name}
+        url={author.avatar}
+        size={80}
+        link={0}
+      ></Avatar>
+      <p className={cx("text")}>Leave @{author.username}?</p>
       <div className={cx("btn")}>
         <button
           onClick={() => {

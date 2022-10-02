@@ -5,16 +5,21 @@ import Avatar from "../../Avatar";
 import { Link } from "react-router-dom";
 import Button from "~/components/Button";
 const cx = classNames.bind(styles);
-function AvatarBox({ user, avtLarge, btn }) {
+function AvatarBox({ username, url, name, avtLarge, btn }) {
   return (
     <div className={cx("item")}>
-      <Avatar user={user} size={avtLarge ? 56 : 32} link={true}></Avatar>
+      <Avatar
+        url={url}
+        username={username}
+        size={avtLarge ? 56 : 32}
+        link={true}
+      ></Avatar>
       <span className={cx("item-text")}>
-        <Link to={`/profile/${user?.username}`} className={cx("username")}>
+        <Link to={`/profile/${username}`} className={cx("username")}>
           {" "}
-          {user?.username}
+          {username}
         </Link>
-        <p className={cx("name")}>{user?.name}</p>
+        <p className={cx("name")}>{name}</p>
       </span>
       <span className={cx("btn-side")}>{btn}</span>
     </div>

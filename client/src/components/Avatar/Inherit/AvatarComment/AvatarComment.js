@@ -9,11 +9,10 @@ import commentRequest from "~/httprequest/comment";
 import { IconButton } from "@mui/material";
 import Menu from "~/components/Menu";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { useUser } from "~/services/RequireAuth";
-import socket from "~/SocketIO/socket";
+import { useSelector } from "react-redux";
 const cx = classNames.bind(styles);
 function AvatarComment({ size, user, showName, showReply, comment }) {
-  const { user: mainUser } = useUser();
+  const mainUserId = useSelector((state) => state.mainUser.data._id);
   const content = useRef(null);
   const [time, setTime] = useState();
   const [isAuthor, setIsAuthor] = useState(false);
@@ -24,7 +23,7 @@ function AvatarComment({ size, user, showName, showReply, comment }) {
     setTime(handleSeconds((current - date) / 1000));
   }, []);
   useEffect(() => {
-    if (mainUser._id === comment.userid) {
+    if (mainUserId === comment.userid) {
       setIsAuthor(true);
     }
   }, [user]);
@@ -32,7 +31,6 @@ function AvatarComment({ size, user, showName, showReply, comment }) {
     let t;
     if (s > 86400) {
       t = Math.round(s / (3600 * 24)) + "d";
-      console.log("hehe");
     } else if (s > 3600) {
       t = Math.round(s / 3600) + "h";
     } else if (s > 60) {
@@ -45,7 +43,12 @@ function AvatarComment({ size, user, showName, showReply, comment }) {
   return (
     <div className={cx("wrapper")}>
       <div className={cx("avatar")}>
-        <Avatar size={size || 30} user={user} link></Avatar>
+        <Avatar
+          size={size || 30}
+          url={user?.avatar}
+          username={user?.username}
+          link
+        ></Avatar>
       </div>
       <div className={cx("container")}>
         <span className={cx("content")}>
@@ -71,9 +74,7 @@ function AvatarComment({ size, user, showName, showReply, comment }) {
                         action: () => {
                           commentRequest
                             .removeComment(comment._id)
-                            .then(({ data }) => {
-                              socket.emit("remove-comment", comment._id);
-                            });
+                            .then(({ data }) => {});
                         },
                       },
                     ]

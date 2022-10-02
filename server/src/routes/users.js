@@ -12,4 +12,6 @@ userRouter.post("/uploadavatar/:userid", userController.uploadAvatar);
 userRouter.get("/find_by_username/:username", userController.findByUsername);
 userRouter.post("/follow", userController.getFollowing);
 userRouter.post("/unfollow", userController.getUnFollowing);
+userRouter.post("/notification/seen", userController.seenNotification);
+userRouter.post("/notification/:id", userController.addNotification);
 export default userRouter;

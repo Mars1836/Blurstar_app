@@ -9,7 +9,6 @@ function LoadingPage() {
   useEffect(() => {
     window.onscroll = () => {
       document.body.style.overflow = "hidden";
-      console.log("prevent");
       window.scroll(0, 0);
     };
   }, []);

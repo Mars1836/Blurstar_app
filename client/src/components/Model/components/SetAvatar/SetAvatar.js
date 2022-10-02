@@ -50,11 +50,8 @@ function SetAvatar() {
   const uploadImage = (base64EncodedImage) => {
     userRequest
       .userUploadAvatar(base64EncodedImage, user._id)
-      .then(() => {
-        console.log("aa");
-      })
+      .then(() => {})
       .finally(() => {
-        console.log("reload");
         window.location.reload();
       });
   };

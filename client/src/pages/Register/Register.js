@@ -49,7 +49,6 @@ function Register() {
     setShowPassword(!showPassword);
   };
   function registerAction(data) {
-    console.log(userRequest.createUser(data).then);
     userRequest
       .createUser(data)
       .then(() => {

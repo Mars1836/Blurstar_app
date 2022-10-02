@@ -1,7 +1,8 @@
 import configs from "../configs";
 import instance from "../configs/axios";
 import axios from "axios";
-const apiRoute = {
+import socket from "~/SocketIO/socket";
+export const apiRoute = {
   findAll: `/api/users`,
   findById: `/api/users/find/`,
   findExceptId: `/api/users/except/`,
@@ -12,10 +13,11 @@ const apiRoute = {
   follow: `/api/users/follow`,
   unfollow: `/api/users/unfollow`,
   getUsersByListsId: `/api/users/findlist`,
+  addNotification: `/api/users/notification/`,
+  seenNotify: `/api/users/notification/seen`,
 };
 const findAll = async () => {
   const user = await instance.get(`${apiRoute.findAll}`);
-  console.log(user);
   return user;
 };
 const findById = async (id) => {
@@ -45,23 +47,27 @@ const getUserByUsername = async (username) => {
   return user;
 };
 const userUploadAvatar = async (base64EncodedImage, userId) => {
-  const t = await instance.post(`${apiRoute.userUploadAvatar + userId}`, {
+  const url = await instance.post(`${apiRoute.userUploadAvatar + userId}`, {
     image: base64EncodedImage,
   });
-  return t;
+  return url;
 };
-const follow = async (userFollowId, userGetFollowId) => {
+const follow = async ({ userFollowId, userGetFollowId }) => {
   const res = await instance.post(`${apiRoute.follow}`, {
     userFollowId: userFollowId,
     userGetFollowId: userGetFollowId,
   });
+
+  socket.emit("follow-user", userGetFollowId, userFollowId);
+
   return res;
 };
-const unfollow = async (userFollowId, userGetFollowId) => {
+const unfollow = async ({ userFollowId, userGetFollowId }) => {
   const res = await instance.post(`${apiRoute.unfollow}`, {
     userFollowId: userFollowId,
     userGetFollowId: userGetFollowId,
   });
+  socket.emit("unfollow-user", userGetFollowId, userFollowId);
   return res;
 };
 const getUsersByListsId = async (list) => {
@@ -69,6 +75,20 @@ const getUsersByListsId = async (list) => {
     list,
   });
   return users;
+};
+const addNotification = async (userId, noti) => {
+  const user = await instance.post(
+    `${apiRoute.addNotification + userId}`,
+    noti
+  );
+  return user;
+};
+const seenNotify = async (userId, notifications) => {
+  const u = await instance.post(`${apiRoute.seenNotify}`, {
+    userId,
+    notifications,
+  });
+  return u;
 };
 const userRequest = {
   findAll,
@@ -81,5 +101,7 @@ const userRequest = {
   follow,
   unfollow,
   getUsersByListsId,
+  addNotification,
+  seenNotify,
 };
 export default userRequest;

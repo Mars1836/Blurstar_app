@@ -1,14 +1,10 @@
-import { useUser } from "../../../../services/RequireAuth.js";
 import styles from "./Post.module.scss";
-import Avatar from "../../../../components/Avatar/Avatar.js";
 import classNames from "classnames/bind";
 import { useEffect, useRef, useState, createRef } from "react";
 import AvatarName from "../../../../components/Avatar/Inherit/AvatarName/AvatarName.js";
 import Comment from "./Comment.js";
 import userRequest from "../../../../httprequest/user.js";
-import postRequest from "../../../../httprequest/post.js";
 import Interaction from "./Interaction.js";
-import socket from "../../../../SocketIO/socket.js";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css"; // optional
 import Button from "../../../../components/Button/Button.js";
@@ -24,71 +20,73 @@ import LoadingComment from "~/components/Loading/LoadingComment/index.js";
 import CommentInput from "../CommentInput/CommentInput.js";
 import commentRequest from "~/httprequest/comment.js";
 import Text from "./Text.js";
+import { useDispatch, useSelector } from "react-redux";
+import { postAction, postApiAction } from "~/store/actions/postAction";
 const cx = classNames.bind(styles);
-function Post({ data, remove }) {
-  const { user } = useUser();
-  const [post, setPost] = useState(data);
+function Post({ postid, status }) {
+  const userid = useSelector((state) => state.mainUser.data._id);
+  const dispatch = useDispatch();
+  const postId = useSelector((state) => state.posts.byId[postid]?._id);
+  if (!postId) {
+    console.log(postId);
+    dispatch(postApiAction.postFetchApi([postid]));
+  }
+  const comments = useSelector((state) => state.posts.byId[postid]?.comments);
+  const authorID = useSelector((state) => state.posts.byId[postid]?.author);
+  const content = useSelector((state) => state.posts.byId[postid]?.content);
+  const createdAt = useSelector((state) => state.posts.byId[postid]?.createdAt);
+  const commentsloaded =
+    useSelector((state) => state.posts.byId[postid]?.commentData) || {};
   const [author, setAuthor] = useState();
-  const [comments, setComments] = useState(null);
   const [isCommentMount, setIsCommentMount] = useState(false);
-  const [liked, setLiked] = useState(false);
   const [date, setDate] = useState("");
   const [isLoadingComment, setIsLoadingComment] = useState(true);
   const [isShowAllCap, setIsShowAllCap] = useState(false);
   const [commentPage, setCommentPage] = useState(1);
+  const isAuthor = userid === authorID;
   const inputComment = createRef();
   let text = useRef("");
   let text2 = useRef("");
   const limitComment = 4;
-  const isAuthor = data.author === user?._id;
   useEffect(() => {
-    setLiked(data.likes.includes(user?._id));
-  }, [liked]);
-  useEffect(() => {
-    userRequest.findById(data.author).then(({ data }) => {
-      setAuthor(data);
-    });
-    let cap = data.content.cap;
-    let characterLimit = 250;
-    let lineLimit = 4;
-    let indexline = getIndex("\n", cap, lineLimit);
-    text.current = cap.slice(0, characterLimit);
-    if (indexline > 0) {
-      text.current = cap.slice(0, indexline);
-      text2.current = cap.slice(indexline, cap.length);
-    } else {
-      text.current = cap.slice(0, characterLimit);
-      text2.current = cap.slice(characterLimit, cap.length);
-    }
-    socket.on("get-comment", (comment, postId) => {
-      if (data._id === postId) {
-        console.log(comment);
-        setComments((comments) => [comment, ...comments]);
-        setPost((post) => {
-          return { ...post, comments: [comment._id, ...post.comments] };
-        });
-        console.log(post);
+    let rsDate;
+    if (postId) {
+      userRequest.findById(authorID).then(({ data }) => {
+        setAuthor(data);
+      });
+      let characterLimit = 250;
+      let lineLimit = 4;
+      let indexline = getIndex("\n", content?.cap || "", lineLimit);
+      text.current = content?.cap.slice(0, characterLimit);
+      if (indexline > 0) {
+        text.current = content?.cap.slice(0, indexline);
+        text2.current = content?.cap.slice(indexline, content?.cap.length);
+      } else {
+        text.current = content?.cap.slice(0, characterLimit);
+        text2.current = content?.cap.slice(characterLimit, content?.cap.length);
       }
-    });
-    setDate(getDate());
-    const rsDate = setInterval(() => {
+
       setDate(getDate());
-    }, 60 * 1000);
+      rsDate = setInterval(() => {
+        setDate(getDate());
+      }, 60 * 1000);
+    }
+
     return () => {
       clearInterval(rsDate);
     };
-  }, []);
+  }, [postId]);
   useEffect(() => {
-    commentRequest
-      .getListComment(data.comments, -1, commentPage, limitComment)
-      .then(({ data }) => {
-        if (comments !== null) {
-          setComments([...comments, ...data]);
-        } else {
-          setComments(data);
-        }
-      });
-  }, [commentPage]);
+    if (postId && isCommentMount) {
+      commentRequest
+        .getListComment(comments, -1, commentPage, limitComment)
+        .then(({ data }) => {
+          dispatch(
+            postAction.loadCommentPost({ commentsloaded: data, postId: postId })
+          );
+        });
+    }
+  }, [postId, commentPage, isCommentMount]);
   const postContent = useRef(null);
   function getIndex(char, string, index) {
     if (index === 1) {
@@ -111,9 +109,9 @@ function Post({ data, remove }) {
         year: "numeric",
       };
       const date = Intl.DateTimeFormat("en", options).format(
-        Date.parse(data?.createdAt)
+        Date.parse(createdAt)
       );
-      const timeCreated = Date.parse(data?.createdAt);
+      const timeCreated = Date.parse(createdAt);
       const current = new Date();
       let diff = (current - timeCreated) / 1000;
       let time;
@@ -140,7 +138,7 @@ function Post({ data, remove }) {
         weekday: "short",
       };
       const date = Intl.DateTimeFormat("en", options).format(
-        Date.parse(data?.createdAt)
+        Date.parse(createdAt)
       );
       return date;
     }
@@ -167,147 +165,148 @@ function Post({ data, remove }) {
       title: "Remove",
       icon: <DeleteIcon sx={{ fontSize: 20 }}></DeleteIcon>,
       action: () => {
-        remove(data._id);
+        dispatch(postApiAction.fetchRemovePost(postid));
       },
     },
   ];
 
   function removeFromListParent(id) {
-    const arr = comments.filter((comment) => {
-      return comment._id !== id;
-    });
-    setComments(arr);
+    // const arr = comments.filter((comment) => {
+    //   return comment._id !== id;
+    // });
   }
   return (
-    <div className={cx("post")}>
-      <div className={cx("post-item")}>
-        <div className={cx("post-head")}>
-          <AvatarName
-            user={author}
-            size={35}
-            status={
-              <Tippy
-                content={getDate(0)}
-                placement="bottom-start"
-                theme="tomato"
-                arrow={false}
-                offset={[-10, 0]}
-              >
-                <Button text={1}>{date}</Button>
-              </Tippy>
-            }
-          ></AvatarName>
-          <Menu items={isAuthor ? authorOptions : userOptions}>
-            <IconButton size="small">
-              <MoreHorizIcon fontSize="large"></MoreHorizIcon>
-            </IconButton>
-          </Menu>
-        </div>
-        <div className={cx("cap")}>
-          <span className={cx("post-content")} ref={postContent}>
-            <Text text={text.current}></Text>
-            {text2.current && (
-              <>
-                {isShowAllCap ? (
-                  <Text text={text2.current}></Text>
-                ) : (
-                  <Button
-                    style={{ color: "#ba2121", display: "inline-block" }}
-                    onClick={() => {
-                      setIsShowAllCap(true);
-                    }}
-                  >
-                    ...See more
-                  </Button>
-                )}
-              </>
-            )}
-          </span>
-        </div>
-        {data.content.data && (
-          <div className={cx("wapper-image")}>
-            <img src={data.content.data} className={cx("post-image")}></img>
+    !postId || (
+      <div
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+        status={status}
+      >
+        <div className={cx("post-item")}>
+          <div className={cx("post-head")}>
+            <AvatarName
+              username={author?.username}
+              url={author?.avatar}
+              size={35}
+              status={
+                <Tippy
+                  content={getDate(0)}
+                  placement="bottom-start"
+                  theme="tomato"
+                  arrow={false}
+                  offset={[-10, 0]}
+                >
+                  <Button text={1}>{date}</Button>
+                </Tippy>
+              }
+            ></AvatarName>
+            <Menu items={isAuthor ? authorOptions : userOptions}>
+              <IconButton size="small">
+                <MoreHorizIcon fontSize="large"></MoreHorizIcon>
+              </IconButton>
+            </Menu>
           </div>
-        )}
-        <Interaction
-          like={liked}
-          likes={data.likes}
-          user={user}
-          inputComment={inputComment}
-          postId={data._id}
-          setLike={setLiked}
-          commentsQuantity={post?.comments.length}
-          handleCommentMount={{ setIsCommentMount, isCommentMount }}
-        />
-        {isCommentMount && (
-          <div className={cx("comment-site")}>
-            <CommentInput
-              user={user}
-              post={data}
-              ref={inputComment}
-              postId={post._id}
-            ></CommentInput>
-            <div className={cx("comment-users")}>
-              {comments !== null && (
+          <div className={cx("cap")}>
+            <span className={cx("post-content")} ref={postContent}>
+              <Text text={text.current}></Text>
+              {text2.current && (
                 <>
-                  {comments.map((comment, index) => {
-                    return (
-                      <Comment
-                        mainUser={user}
-                        data={comment}
-                        key={comment._id}
-                        getRemove={removeFromListParent}
-                        setLoading={setIsLoadingComment}
-                        setLoadingComment={
-                          index === comments.length - 1
-                            ? () => {
-                                setIsLoadingComment(false);
-                              }
-                            : ""
-                        }
-                      ></Comment>
-                    );
-                  })}
-                  {isLoadingComment && comments.length > 0 && (
-                    <LoadingComment></LoadingComment>
+                  {isShowAllCap ? (
+                    <Text text={text2.current}></Text>
+                  ) : (
+                    <Button
+                      style={{ color: "#ba2121", display: "inline-block" }}
+                      onClick={() => {
+                        setIsShowAllCap(true);
+                      }}
+                    >
+                      ...See more
+                    </Button>
                   )}
                 </>
               )}
+            </span>
+          </div>
+          {content.data && (
+            <div className={cx("wapper-image")}>
+              <img src={content.data} className={cx("post-image")}></img>
             </div>
-            {post?.comments.length > comments.length && (
-              <div className={cx("loadmore")}>
+          )}
+          <Interaction
+            inputComment={inputComment}
+            postId={postid}
+            commentsQuantity={comments.length}
+            handleCommentMount={{ setIsCommentMount, isCommentMount }}
+          />
+          {isCommentMount && (
+            <div className={cx("comment-site")}>
+              <CommentInput
+                post={true}
+                ref={inputComment}
+                postId={postid}
+              ></CommentInput>
+              <div className={cx("comment-users")}>
+                {commentsloaded?.allIds && (
+                  <>
+                    {commentsloaded.allIds.map((id, index) => {
+                      return (
+                        <Comment
+                          data={commentsloaded.byId[id]}
+                          key={id}
+                          getRemove={removeFromListParent}
+                          setLoading={setIsLoadingComment}
+                          setLoadingComment={
+                            index === commentsloaded.allIds?.length - 1
+                              ? () => {
+                                  setIsLoadingComment(false);
+                                }
+                              : ""
+                          }
+                        ></Comment>
+                      );
+                    })}
+                    {isLoadingComment && commentsloaded.allIds?.length > 0 && (
+                      <LoadingComment></LoadingComment>
+                    )}
+                  </>
+                )}
+              </div>
+              {comments.length > commentsloaded.allIds?.length && (
+                <div className={cx("loadmore")}>
+                  <Button
+                    underline={1}
+                    onClick={() => {
+                      setCommentPage(commentPage + 1);
+                    }}
+                  >
+                    View more comments
+                  </Button>
+                  <p>
+                    {commentsloaded.allIds?.length} of {comments.length}
+                  </p>
+                </div>
+              )}
+
+              {commentsloaded.allIds?.length > 5 && (
                 <Button
                   underline={1}
                   onClick={() => {
-                    setCommentPage(commentPage + 1);
+                    inputComment.current?.focus({ preventScroll: true });
+                    inputComment.current?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "center",
+                    });
                   }}
                 >
-                  View more comments
+                  Write a comment...
                 </Button>
-                <p>
-                  {comments?.length} of {post?.comments.length}
-                </p>
-              </div>
-            )}
-
-            {comments?.length > 5 && (
-              <Button
-                underline={1}
-                onClick={() => {
-                  inputComment.current?.focus({ preventScroll: true });
-                  inputComment.current?.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center",
-                  });
-                }}
-              >
-                Write a comment...
-              </Button>
-            )}
-          </div>
-        )}
+              )}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    )
   );
 }
 export default Post;

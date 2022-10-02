@@ -1,60 +1,45 @@
 import styles from "./Profile.module.scss";
 import classnames from "classnames/bind";
 import Head from "./components/Head/Head";
-import { useUser } from "../../services/RequireAuth";
 import { useState, useEffect } from "react";
 import Button from "~/components/Button";
 import { useLocation } from "react-router-dom";
 import userRequest from "~/httprequest/user";
 import Post from "../Home/Component/Post";
-import postRequest from "~/httprequest/post";
 import LoadingComment from "~/components/Loading/LoadingComment";
+import { useDispatch, useSelector } from "react-redux";
 const cx = classnames.bind(styles);
 function Profile() {
-  const { user } = useUser();
-  const [author, setAuthor] = useState();
-  const [tab, setTab] = useState(0);
-  const [isAuthor, setIsAuthor] = useState(null);
-  const [posts, setPosts] = useState();
   const location = useLocation();
   const user_path = location.pathname.split("/")[2];
+  const isAuthor = useSelector(
+    (state) => state.mainUser?.data?.username === user_path
+  );
+  const dispatch = useDispatch();
+  const [author, setAuthor] = useState();
+  const [tab, setTab] = useState(0);
+  const [posts, setPosts] = useState([]);
+
   useEffect(() => {
     userRequest
       .getUserByUsername(user_path)
       .then(({ data }) => {
         setAuthor(data);
-        postRequest
-          .getListPosts(data.posts)
-          .then(({ data }) => {
-            setPosts(data);
-          })
-          .catch(() => {});
+        setPosts(data.posts);
       })
       .catch((err) => {
         console.log(err);
-      })
-      .finally(() => {
-        if (user) {
-          setIsAuthor(user_path === user?.username);
-        }
       });
-  }, [user, location]);
-  function removePost(id) {
-    const index = posts.findIndex((post) => {
-      return id === post._id;
-    });
-    let newPost = [...posts];
-    newPost.splice(index, 1);
-    setPosts(newPost);
-  }
+  }, [location]);
+  console.log(posts);
+
   return (
     <>
       {isAuthor !== null ? (
         <div className={cx("wapper")}>
           <div className={cx("row")}>
             <div className={cx("col l-8 l-0-2 m-10 m-0-1 c-12")}>
-              {console.log(author, user)}
-              <Head author={author} user={user} isAuthor={isAuthor}></Head>
+              {author && <Head author={author} isAuthor={isAuthor}></Head>}
               <div className={cx("tab")}>
                 <div className={cx("line")}></div>
                 <div className={cx("content")}>
@@ -236,20 +221,12 @@ function Profile() {
                 <div className={cx("row")}>
                   <div className={cx("col l-6 l-0-3 m-8 m-0-2 c-12")}>
                     <div className={cx("post-site")}>
-                      {posts ? (
+                      {posts.length > 0 && (
                         <>
-                          {posts.map((post) => {
-                            return (
-                              <Post
-                                data={post}
-                                key={post._id}
-                                remove={removePost}
-                              ></Post>
-                            );
+                          {posts.map((postId) => {
+                            return <Post postid={postId} key={postId}></Post>;
                           })}
                         </>
-                      ) : (
-                        <LoadingComment></LoadingComment>
                       )}
                     </div>
                   </div>

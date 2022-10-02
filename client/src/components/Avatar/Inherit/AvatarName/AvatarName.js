@@ -3,17 +3,30 @@ import classNames from "classnames/bind";
 import Avatar from "../../Avatar";
 import { Link } from "react-router-dom";
 const cx = classNames.bind(styles);
-function AvatarName({ size, user, status }) {
+function AvatarName({
+  size,
+  url,
+  username,
+  name,
+  status,
+  nameStyle,
+  underline = "true",
+}) {
   return (
     <div className={cx("wrapper")}>
-      <Avatar size={size || 30} user={user} link></Avatar>
+      <Avatar size={size || 30} username={username} url={url} link></Avatar>
       <div className={cx("contain")}>
         <Link
-          to={`/profile/${user?.username}`}
+          to={`/profile/${username}`}
           className={cx("user-name")}
-          style={{ fontSize: `${size / 2.2}px` }}
+          style={{
+            fontSize: `${size / 2.2}px`,
+            transform: "transition(10,10)",
+            ...nameStyle,
+          }}
+          underline={underline}
         >
-          {user?.username}
+          {username}
         </Link>
         <span className={cx("status")}>{status}</span>
       </div>

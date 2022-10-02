@@ -2,40 +2,46 @@ import styles from "./Post.module.scss";
 import classNames from "classnames/bind";
 
 import { IconContext } from "react-icons/lib";
-import postRequest from "../../../../httprequest/post";
 import { useEffect, useState } from "react";
 import Button from "../../../../components/Button";
 import LikeModel from "../../../../components/Model/components/Like/LikeModel";
 import userRequest from "~/httprequest/user";
+import { useDispatch, useSelector } from "react-redux";
+import { postAction, postApiAction } from "~/store/actions/postAction";
 const cx = classNames.bind(styles);
 function Interaction({
-  like,
   postId,
-  setLike,
   inputComment,
-  user,
-  likes,
   commentsQuantity,
   handleCommentMount,
 }) {
-  const [isLiked, setIsLiked] = useState(like);
-  const [likeNum, setLikeNum] = useState(likes.length);
-  const [listUsersLike, setListUsersLike] = useState();
+  const dispatch = useDispatch();
+  const userId = useSelector((state) => state.mainUser.data._id);
+  const likes = useSelector((state) => state.posts.byId[postId].likes) || [];
+  const authorPost =
+    useSelector((state) => state.posts.byId[postId].author) || [];
+  const [isLiked, setIsLiked] = useState(likes.includes(userId));
+  const [listUsers, setListUsers] = useState([]);
   useEffect(() => {
-    userRequest.getUsersLike(postId).then(({ data }) => {
-      setListUsersLike(data);
-    });
+    return () => {
+      console.log("clear");
+    };
   }, []);
-  useEffect(() => {
-    setIsLiked(like);
-  }, [like]);
+
   useEffect(() => {
     if (inputComment.current) inputComment.current.focus();
   }, [handleCommentMount.isCommentMount]);
+
   const handleLike = async () => {
-    await postRequest.likePost(postId, user._id);
-    setIsLiked(!isLiked);
-    isLiked ? setLikeNum(likeNum - 1) : setLikeNum(likeNum + 1);
+    setIsLiked((pre) => {
+      return !pre;
+    });
+    if (isLiked) {
+      dispatch(postApiAction.fetchUnlikePost(postId, userId));
+    } else {
+      console.log("like");
+      dispatch(postApiAction.fetchLikePost(postId, userId, authorPost));
+    }
   };
   const handleComment = () => {
     handleCommentMount.setIsCommentMount(true);
@@ -45,19 +51,19 @@ function Interaction({
     <>
       <div className={cx("figure")}>
         <Button
-          dialog={
-            <LikeModel listUser={userRequest.getUsersLike(postId)}></LikeModel>
-          }
+          dialog={<LikeModel listUsers={listUsers}></LikeModel>}
           onClick={() => {
-            console.log("active");
+            userRequest.getUsersByListsId(likes).then(({ data }) => {
+              setListUsers(data);
+            });
           }}
         >
           <div
             className={cx("like-num")}
-            style={likeNum ? { color: "var(--light-red)" } : {}}
+            style={likes?.length > 0 ? { color: "var(--light-red)" } : {}}
           >
             {" "}
-            {likeNum} Likes
+            {likes?.length} Likes
           </div>
         </Button>
         <div className={cx("cmsh")}>

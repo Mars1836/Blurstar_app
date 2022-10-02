@@ -6,11 +6,10 @@ import styles from "./Search.module.scss";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import userRequest from "../../../../httprequest/user";
-import { useUser } from "../../../../services/RequireAuth";
-import Menu from "../../../../components/Menu";
 import Avatar from "../../../../components/Avatar";
 import TippyHeadless from "@tippyjs/react/headless";
 import Button from "../../../../components/Button/Button";
+import { useSelector } from "react-redux";
 const cx = classNames.bind(styles);
 const Search = () => {
   const [placeholder, setPlacehoder] = useState(true);
@@ -19,7 +18,7 @@ const Search = () => {
   const [userList, setUserList] = useState([]);
   const [inputFocus, setInputFocus] = useState(false);
   const navigate = useNavigate();
-  const { user } = useUser();
+  const userid = useSelector((state) => state.mainUser.data?._id);
   const input = useRef();
   useEffect(() => {
     if (!searchValue) {
@@ -36,7 +35,7 @@ const Search = () => {
   }, [searchValue]);
   function getUser(searchValue) {
     userRequest
-      .findExceptId(user._id, { name: searchValue })
+      .findExceptId(userid, { name: searchValue })
       .then(({ data }) => {
         return data;
       })
@@ -82,7 +81,12 @@ const Search = () => {
                     setInputFocus(false);
                   }}
                 >
-                  <Avatar user={user} size={35} link={false}></Avatar>
+                  <Avatar
+                    username={user.name}
+                    url={user.avatar}
+                    size={35}
+                    link={false}
+                  ></Avatar>
 
                   <span className={cx("item-text")}>
                     <p className={cx("username")}> {user.username}</p>

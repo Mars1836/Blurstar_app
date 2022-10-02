@@ -36,7 +36,7 @@ const Model = ({ conponent, setClose, onClose, children }) => {
           handleClose();
         }}
       >
-        {children}
+        <div className={cx("content")}> {children}</div>
       </div>
     </ModelContext.Provider>,
     document.querySelector("body")

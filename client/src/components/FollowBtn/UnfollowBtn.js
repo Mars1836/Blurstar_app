@@ -7,50 +7,27 @@ import { useState } from "react";
 import { CircularProgress } from "@mui/material";
 import styles from "./FollowBtn.module.scss";
 import classNames from "classnames/bind";
-import socket from "~/SocketIO/socket";
-import { useUser } from "~/services/RequireAuth";
-const cx = classNames.bind(styles);
-function UnfollowBtn({
-  text = "Unfollow",
-  action,
-  user,
-  mainUser,
-  onClick,
-  ...props
-}) {
-  const { setUser } = useUser();
 
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { mainUserApiAction } from "~/store/actions/mainUserAction";
+const cx = classNames.bind(styles);
+function UnfollowBtn({ text = "Unfollow", action, author, onClick, ...props }) {
+  const dispatch = useDispatch();
+  const userId = useSelector((state) => state.mainUser?.data?._id);
   const [loading, setLoading] = useState(false);
   function handleUnFollow() {
-    const userFollowId = mainUser._id;
-    const userGetFollowId = user._id;
-    setLoading(true);
-    userRequest
-      .unfollow(userFollowId, userGetFollowId)
-      .then((data) => {
-        setTimeout(() => {
-          if (action) {
-            action();
-          }
-          setUser({
-            ...mainUser,
-            following: mainUser.following.filter((x) => {
-              return x !== user._id;
-            }),
-          });
-          socket.emit("unfollow-user", user, mainUser);
-          setLoading(false);
-        }, 2000);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    const userFollowId = userId;
+    const userGetFollowId = author._id;
+    dispatch(
+      mainUserApiAction.fetchUnfollow({ userFollowId, userGetFollowId })
+    );
   }
   return (
     <>
       <Button
         dialog={
-          <Unfollow user={user} handleUnFollow={handleUnFollow}></Unfollow>
+          <Unfollow author={author} handleUnFollow={handleUnFollow}></Unfollow>
         }
         onClick={onClick}
         style={{

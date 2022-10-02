@@ -47,15 +47,33 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  console.log("a user connected.");
+  socket.on("set-user-id", (userId) => {
+    socket.join(userId);
+  });
   socket.on("click", () => {
     io.sockets.emit("sv-click");
   });
-  socket.on("up-post", (post) => {
-    io.sockets.emit("get-post", post);
+  socket.on("notification", (to, data) => {
+    socket.to(to).emit("get-notification", data);
   });
+  socket.on("up-post", (post) => {
+    socket.broadcast.emit("get-post", post);
+  });
+  socket.on("like-post", (userId, postId) => {
+    socket.broadcast.emit("get-like-post", userId, postId);
+    socket.to(["63072a771513e67be021c830"]).emit("test", userId);
+  });
+  socket.on("unlike-post", (userId, postId) => {
+    socket.broadcast.emit("get-unlike-post", userId, postId);
+  });
+
   socket.on("comment", (comment, postId) => {
-    io.sockets.emit("get-comment", comment, postId);
+    socket.broadcast.emit("get-comment", comment, postId);
+    socket.broadcast.emit("get-notify", {
+      type: "COMMENT_POST",
+      postid: postId,
+      userid: comment.userid,
+    });
   });
   socket.on("reply", (comment, commentId) => {
     io.sockets.emit("get-reply", comment, commentId);

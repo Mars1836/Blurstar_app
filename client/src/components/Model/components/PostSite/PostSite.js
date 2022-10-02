@@ -1,14 +1,13 @@
 import styles from "./PostSite.module.scss";
 import classNames from "classnames/bind";
 import { useContext, useEffect, useRef, useState } from "react";
-import { useUser } from "../../../../services/RequireAuth";
-import postRequest from "../../../../httprequest/post";
 import { ModelContext } from "../../Model";
 import AvatarName from "../../../Avatar/Inherit/AvatarName/AvatarName";
-import socket from "../../../../SocketIO/socket";
 import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
 import { Button as ButtonMaterial } from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import { useSelector, useDispatch } from "react-redux";
+import { postApiAction } from "~/store/actions/postAction";
 const cx = classNames.bind(styles);
 function PostSite() {
   const [postDisable, setPostDisable] = useState(true);
@@ -16,7 +15,13 @@ function PostSite() {
   const [dataPost, setDataPost] = useState("");
   const [dataURL, setDataURL] = useState("");
   const contentInput = useRef(null);
-  const { user } = useUser();
+  const dispatch = useDispatch();
+  const userId = useSelector((state) => state.mainUser.data._id);
+  const userAvatar = useSelector((state) => state.mainUser.data.avatar);
+  const userUserName = useSelector((state) => state.mainUser.data.username);
+  const userFollowers = useSelector((state) => state.mainUser.data.followers);
+
+  const userName = useSelector((state) => state.mainUser.data.name);
   const { handleClose } = useContext(ModelContext);
   useEffect(() => {
     contentInput.current.focus();
@@ -63,15 +68,13 @@ function PostSite() {
   };
   const handleSubmit = (e) => {
     const newPost = {
-      author: user._id,
+      author: userId,
       content: postContent,
     };
-    postRequest.createPost(newPost, dataURL).then(({ data }) => {
-      socket.emit("up-post", data);
-      localStorage.removeItem("postContent");
-      localStorage.removeItem("dataURL");
-    });
 
+    dispatch(postApiAction.fetchCreatePost(newPost, dataURL, userFollowers));
+    localStorage.removeItem("postContent");
+    localStorage.removeItem("dataURL");
     handleClose();
   };
   const handleData = (e) => {
@@ -92,7 +95,11 @@ function PostSite() {
     >
       <div className={cx("title")}>Create new post</div>
       <div className={cx("user")}>
-        <AvatarName user={user} size={35}></AvatarName>
+        <AvatarName
+          url={userAvatar}
+          username={userUserName}
+          size={35}
+        ></AvatarName>
       </div>
       <div className={cx("content-post")}>
         <textarea

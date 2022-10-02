@@ -8,22 +8,38 @@ import configs from "../../../../configs";
 import Cookies from "universal-cookie";
 import PostSite from "../../../../components/Model/components/PostSite";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../../../../services/RequireAuth";
 import Avatar from "../../../../components/Avatar";
-import socket from "../../../../SocketIO/socket";
-import Notification from "~/components/Notification";
+import Notification from "../Notifications/Notification";
+import { useSelector } from "react-redux";
+import { createSelector } from "reselect";
 const cx = classNames.bind(styles);
 const Action = () => {
+  const userUsername = useSelector((state) => state.mainUser?.data?.username);
+  const userName = useSelector((state) => state.mainUser?.data?.name);
+  const userAvatar = useSelector((state) => state.mainUser?.data?.avatar);
+  const userNotifications = useSelector(
+    (state) => state.mainUser?.data?.notifications
+  );
+  const userNotificationsSelect = createSelector(
+    (state) => state.mainUser?.data?.notifications,
+    (notis) => {
+      if (notis) {
+        return notis.filter((noti) => {
+          return noti.seen === false;
+        }).length;
+      }
+      return 0;
+    }
+  );
+  const num = useSelector((state) => userNotificationsSelect(state));
   const cookies = new Cookies();
   const navigate = useNavigate();
-  const { user } = useUser();
   const actions = [
     {
       title: "home",
       icon: iconHeader.home,
       action: () => {
         console.log("home");
-        socket.emit("click");
       },
       props: {
         to: "/",
@@ -99,7 +115,7 @@ const Action = () => {
       ),
       title: "Profile",
       action: function () {
-        navigate(`/profile/${user.username}`);
+        navigate(`/profile/${userUsername}`);
       },
     },
     {
@@ -196,7 +212,6 @@ const Action = () => {
       },
     },
   ];
-
   const [currentAction, setCurrentAction] = useState(actions[0].title);
   const handleActionStop = () => {
     const path = window.location.pathname;
@@ -208,6 +223,7 @@ const Action = () => {
     }
     handleCurrentAction(action);
   };
+
   const handleCurrentAction = (action) => {
     setCurrentAction(action);
   };
@@ -218,38 +234,38 @@ const Action = () => {
         {actions.map((action, index) => {
           let icon = action.icon.blur;
           let component = action.component;
-          if (currentAction == action.title) {
+          if (currentAction === action.title) {
             icon = action.icon.focus;
           }
-          if (action.menu) {
+          if (action.title === "notification" && action.menu) {
             return (
-              <Menu
-                items={[
-                  {
-                    title: "notification 1",
-                  },
-                  {
-                    title: "notification 2",
-                  },
-                  {
-                    title: "notification 3",
-                  },
-                ]}
-                onHide={handleActionStop}
-              >
-                <Button
-                  key={index}
-                  {...action.props}
-                  onClick={() => {
-                    handleCurrentAction(action.title);
-                    action.action();
-                  }}
-                  dialog={component}
-                  componentOnHide={handleActionStop}
+              <div key={index}>
+                <Menu
+                  component={<Notification></Notification>}
+                  style={{ minWidth: "300px", height: "500px" }}
+                  onHide={handleActionStop}
                 >
-                  {icon}
-                </Button>
-              </Menu>
+                  <Button
+                    key={index}
+                    {...action.props}
+                    onClick={() => {
+                      handleCurrentAction(action.title);
+                      action.action();
+                    }}
+                    dialog={component}
+                    componentOnHide={handleActionStop}
+                  >
+                    <div className={cx("notify-wapper")}>
+                      {icon}
+                      {currentAction !== action.title && num !== 0 && (
+                        <span className={cx("notify-bg")}>
+                          <span className={cx("notify-num")}>{num}</span>
+                        </span>
+                      )}
+                    </div>
+                  </Button>
+                </Menu>
+              </div>
             );
           }
           return (
@@ -275,7 +291,7 @@ const Action = () => {
               handleCurrentAction("userOpiton");
             }}
           >
-            <Avatar user={user} size={25}></Avatar>
+            <Avatar username={userName} url={userAvatar} size={25}></Avatar>
           </Button>
         </Menu>
       </div>

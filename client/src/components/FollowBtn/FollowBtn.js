@@ -1,30 +1,21 @@
 import React from "react";
 import Button from "../Button";
-import userRequest from "~/httprequest/user";
 import { CircularProgress } from "@mui/material";
 import { useState } from "react";
 import styles from "./FollowBtn.module.scss";
 import classNames from "classnames/bind";
-import socket from "~/SocketIO/socket";
-import { useUser } from "~/services/RequireAuth";
+import { useSelector, useDispatch } from "react-redux";
+import { mainUserApiAction } from "~/store/actions/mainUserAction";
 const cx = classNames.bind(styles);
-function FollowBtn({ text = "Follow", action, user, mainUser, ...props }) {
+function FollowBtn({ text = "Follow", action, author, ...props }) {
   const [loading, setLoading] = useState(false);
-  const { setUser } = useUser();
+  const dispatch = useDispatch();
+  const userFollowing = useSelector((state) => state.mainUser?.data?.following);
+  const userId = useSelector((state) => state.mainUser?.data?._id);
   function handleFollow() {
-    const userFollowId = mainUser._id;
-    const userGetFollowId = user._id;
-    setLoading(true);
-    userRequest.follow(userFollowId, userGetFollowId).then((data) => {
-      setTimeout(() => {
-        if (action) {
-          action();
-        }
-        socket.emit("follow-user", user, mainUser);
-        setUser({ ...mainUser, following: [user._id, ...mainUser.following] });
-        setLoading(false);
-      }, 1000);
-    });
+    const userFollowId = userId;
+    const userGetFollowId = author?._id;
+    dispatch(mainUserApiAction.fetchFollow({ userFollowId, userGetFollowId }));
   }
   return (
     <>
