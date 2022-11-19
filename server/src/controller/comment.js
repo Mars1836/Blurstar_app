@@ -69,8 +69,7 @@ const commentController = {
     const commentId = req.params.id;
     const postId = req.body.postId;
     const commentParentId = req.body.commentParentId;
-    console.log(commentParentId);
-    console.log(commentId);
+
     try {
       const doc = await Comment.findOne({ _id: commentId });
       await doc.deleteOne();
@@ -85,8 +84,6 @@ const commentController = {
               },
             }
           );
-
-          console.log(a);
         } catch (error) {
           console.log(error);
         }

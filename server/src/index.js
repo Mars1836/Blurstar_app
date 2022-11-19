@@ -16,15 +16,18 @@ import resetRouter from "./routes/reset.js";
 //database
 import conn from "./database/mongoose_connect.js";
 import commentRouter from "./routes/comment.js";
-import { isBooleanObject } from "util/types";
-
+import path from "path";
 const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 4000;
+
+const __dirname = path.resolve(path.join(""));
+
 const corsOption = {
   origin: "http://localhost:3000",
   optionsSuccessStatus: 200,
 };
+
 conn.connect();
 app.use(cors(corsOption));
 app.use(express.json({ extended: true, limit: "10mb" }));
@@ -37,9 +40,7 @@ app.use("/api/users", verifyToken, userRouter);
 app.use("/api/messagses", verifyToken, messageRouter);
 app.use("/auth", authRouter);
 app.use("/api/reset", resetRouter);
-app.use("*", (req, res) => {
-  res.json("endpoint not found");
-});
+
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:3000",
@@ -88,6 +89,13 @@ io.on("connection", (socket) => {
     io.sockets.emit("get-unfollow-user", user, mainUser);
   });
 });
+if ((process.env.NODE_ENV = "production")) {
+  app.use(express.static(path.join(__dirname, "/client/build")));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "/client/build", "index.html"));
+  });
+}
 server.listen(PORT, () => {
   console.log("server is running");
 });
