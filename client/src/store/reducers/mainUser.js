@@ -27,7 +27,7 @@ const mainUserReducer = produce((state = initState, action) => {
       }
       break;
     case mainUserType.updateAvatar:
-      state.avatar = action.payload;
+      state.data.avatar = action.payload;
       break;
     case mainUserType.getNotification:
       state.data.notifications.unshift(action.payload);
@@ -35,8 +35,8 @@ const mainUserReducer = produce((state = initState, action) => {
     case mainUserType.seenNotify:
       const note = action.payload;
       if (Array.isArray(note)) {
-        state.data.notifications.map((noti) => {
-          return note.includes(noti) ? { ...noti, seen: true } : noti;
+        state.data.notifications = state.data.notifications.map((noti) => {
+          return note.includes(noti.id) ? { ...noti, seen: true } : noti;
         });
       } else {
         state.data.notifications = state.data.notifications.map((noti) => {
@@ -46,7 +46,9 @@ const mainUserReducer = produce((state = initState, action) => {
           return note === noti.id ? { ...noti, seen: true } : noti;
         });
       }
-
+    case mainUserType.updateInfor:
+      const infor = action.payload;
+      state.data = { ...state.data, ...infor };
     default:
       return state;
   }

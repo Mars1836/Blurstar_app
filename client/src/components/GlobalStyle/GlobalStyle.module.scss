@@ -4,6 +4,7 @@
   --ig-secondary-text: rgb(96, 98, 102);
   --blue-4: #47afff;
   --blue-3: rgb(0, 149, 246);
+  --page-background: rgb(253, 250, 250);
   --ig-primary-background: rgb(255, 255, 255);
   --light-gray: rgb(219, 219, 219);
   --light-red: rgb(237, 73, 86);
@@ -12,12 +13,15 @@
     brightness(96%) contrast(92%);
   --filter-gray: invert(41%) sepia(7%) saturate(260%) hue-rotate(181deg)
     brightness(88%) contrast(89%);
+  --header_height: 60px;
 }
 * {
   font-family: "Roboto", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   box-sizing: border-box;
   line-height: 22px;
   font-weight: 400;
+  padding: 0;
+  margin: 0;
 }
 html {
   font-size: 60%;
@@ -26,9 +30,7 @@ body {
   font-size: 1.5rem;
   overflow-x: hidden;
 }
-p {
-  margin: 0;
-}
+
 img {
   display: block;
   user-select: none;
@@ -39,6 +41,7 @@ a {
   line-height: 22px;
   display: inline-block;
 }
+
 input,
 button {
   border: none;

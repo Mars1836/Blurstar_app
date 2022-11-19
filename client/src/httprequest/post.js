@@ -77,8 +77,12 @@ const getListPosts = async (list) => {
   });
   return posts;
 };
-const getRecommendPostId = async (userId) => {
-  const postIds = await instance.get(`${apiRoute.getRecommendPostId}`);
+const getRecommendPostId = async (userId, num) => {
+  const postIds = await instance.get(`${apiRoute.getRecommendPostId}`, {
+    params: {
+      num,
+    },
+  });
   return postIds;
 };
 const postRequest = {

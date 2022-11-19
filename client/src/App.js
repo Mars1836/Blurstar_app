@@ -18,6 +18,7 @@ function App() {
 
   useEffect(() => {
     socket.on("get-comment", (comment, postId) => {
+      console.log("asdsa");
       dispatch(postAction.commentPost({ ...comment, postId }));
     });
 
@@ -32,7 +33,8 @@ function App() {
     });
 
     socket.on("get-notification", (data) => {
-      dispatch(mainUserApiAction.fetchCreateNotification(userId, data));
+      if (data.userId !== userId)
+        dispatch(mainUserApiAction.fetchCreateNotification(userId, data));
     });
     return () => {
       socket.off("get-comment");
@@ -70,7 +72,11 @@ function App() {
           })}
           {privateRoute.map((page, index) => {
             let Layout = DefaultLayout;
+
             let Content = page.component;
+            if (page.layout) {
+              Layout = page.layout;
+            }
             if (page.layout === null) {
               Layout = "div";
             }

@@ -9,7 +9,10 @@ const postType = {
   likePost: "LIKE_POST",
   unlikePost: "UNLIKE_POST",
   loadCommentPost: "LOAD_COMMENT_POST",
-  getSuggestedPost: "GET_SUGGESTED_POST_REQUEST",
+  getSuggestedPost: "GET_SUGGESTED_POST",
+  deleteSuggestedPost: "DELETE_SUGGESTED_POST_REQUEST",
+  removeReplyComment: "DELETE_REPLY_COMMENT",
+  getPostSuggestRequest: "GET_SUGGESTED_POST_REQUEST",
 };
 
 export default postType;

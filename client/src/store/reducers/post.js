@@ -4,12 +4,24 @@ const initState = {
   byId: {},
   suggested: [],
   loading: false,
+  loadingSuggestedPost: false,
   error: null,
 };
 const postReducer = produce((state = initState, action) => {
   switch (action.type) {
     case postType.getSuggestedPost:
-      state.suggested = action.payload;
+      const list = action.payload.map((id) => {
+        return {
+          id,
+          show: true,
+        };
+      });
+      state.suggested = [...state.suggested, ...list];
+      state.loadingSuggestedPost = false;
+      break;
+    case postType.getPostSuggestRequest:
+      console.log("123");
+      state.loadingSuggestedPost = true;
       break;
     case postType.getPostRequest:
       state.loading = true;
@@ -22,7 +34,6 @@ const postReducer = produce((state = initState, action) => {
           [item._id]: item,
         };
       }, state.byId);
-
       state.byId = byId;
     case postType.getPostError:
       state.error = action.payload;
@@ -47,15 +58,17 @@ const postReducer = produce((state = initState, action) => {
       break;
     case postType.createPost:
       state.byId[action.payload._id] = action.payload;
-      if (action.payload.order === -1) {
-        state.suggested.push(action.payload._id);
-      } else {
-        state.suggested.unshift(action.payload._id);
-      }
+      state.suggested.unshift({ id: action.payload._id, show: true });
       break;
     case postType.commentPost:
       if (state.byId[action.payload.postId]) {
         state.byId[action.payload.postId].comments.unshift(action.payload._id);
+        if (!state.byId[action.payload.postId].commentData) {
+          state.byId[action.payload.postId].commentData = {
+            byId: {},
+            allIds: [],
+          };
+        }
         state.byId[action.payload.postId].commentData.allIds.unshift(
           action.payload._id
         );
@@ -63,6 +76,29 @@ const postReducer = produce((state = initState, action) => {
           action.payload;
       }
 
+      break;
+    case postType.removeCommentPost:
+      {
+        const { postId, commentId } = action.payload;
+        state.byId[postId].comments = state.byId[postId].comments.filter(
+          (id) => {
+            return id !== commentId;
+          }
+        );
+        state.byId[postId].commentData.allIds = state.byId[
+          postId
+        ].commentData.allIds.filter((id) => {
+          return id !== commentId;
+        });
+        delete state.byId[postId].commentData.byId[commentId];
+      }
+      break;
+    case postType.removeReplyComment:
+      {
+        const { postId, commentId } = action.payload;
+        console.log("asddddddddasjdjjjas");
+        console.log({ postId, commentId });
+      }
       break;
     case postType.unlikePost:
       {
@@ -82,6 +118,14 @@ const postReducer = produce((state = initState, action) => {
         }
       }
       break;
+    case postType.deleteSuggestedPost:
+      const index = state.suggested.findIndex((ob) => {
+        return ob.id === action.payload;
+      });
+      state.suggested[index] = {
+        id: state.suggested[index].id,
+        show: false,
+      };
     default:
       break;
   }

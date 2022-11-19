@@ -97,6 +97,18 @@ const postController = {
       res.status(500).json(error);
     }
   },
+  removeComment: async (postId, commentId) => {
+    try {
+      await Post.updateOne(
+        { _id: postId },
+        {
+          $pull: {
+            comments: commentId,
+          },
+        }
+      );
+    } catch (error) {}
+  },
   like: async (req, res) => {
     const id = req.params.id; //id post
     try {
@@ -140,7 +152,13 @@ const postController = {
     }
   },
   getRecommendPostId: async (req, res) => {
-    const postIds = await Post.find({}).select("_id").sort({ $natural: -1 });
+    const { num } = req.query;
+    console.log(num);
+    const postIds = await Post.find({})
+      .select("_id")
+      .sort({ $natural: -1 })
+      .skip(num)
+      .limit(5);
     res.status(200).json(
       postIds.map((postId) => {
         return postId._id;

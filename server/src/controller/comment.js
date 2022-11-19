@@ -1,4 +1,6 @@
 import Comment from "../models/comment.js";
+import postController from "./post.js";
+import mongoose from "mongoose";
 const commentController = {
   create: async (comment) => {
     const newComment = await new Comment(comment);
@@ -62,12 +64,34 @@ const commentController = {
     );
     res.status(200).json(newComment);
   },
+
   remove: async (req, res) => {
     const commentId = req.params.id;
+    const postId = req.body.postId;
+    const commentParentId = req.body.commentParentId;
+    console.log(commentParentId);
+    console.log(commentId);
     try {
       const doc = await Comment.findOne({ _id: commentId });
       await doc.deleteOne();
 
+      if (commentParentId) {
+        try {
+          const a = await Comment.updateOne(
+            { _id: commentParentId },
+            {
+              $pull: {
+                comments: mongoose.Types.ObjectId(commentId),
+              },
+            }
+          );
+
+          console.log(a);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      postController.removeComment(postId, commentId);
       res.status(200).json("delete comment");
     } catch (error) {
       console.log(error);

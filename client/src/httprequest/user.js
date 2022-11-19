@@ -15,7 +15,10 @@ export const apiRoute = {
   getUsersByListsId: `/api/users/findlist`,
   addNotification: `/api/users/notification/`,
   seenNotify: `/api/users/notification/seen`,
+  updateInfor: `/api/users/update`,
 };
+const { notifications } = configs;
+
 const findAll = async () => {
   const user = await instance.get(`${apiRoute.findAll}`);
   return user;
@@ -59,7 +62,10 @@ const follow = async ({ userFollowId, userGetFollowId }) => {
   });
 
   socket.emit("follow-user", userGetFollowId, userFollowId);
-
+  socket.emit("notification", userGetFollowId, {
+    userId: userFollowId,
+    type: notifications.follow,
+  });
   return res;
 };
 const unfollow = async ({ userFollowId, userGetFollowId }) => {
@@ -90,6 +96,13 @@ const seenNotify = async (userId, notifications) => {
   });
   return u;
 };
+const updateInfor = async (userId, infor) => {
+  const newU = await instance.post(`${apiRoute.updateInfor}`, {
+    userId,
+    infor,
+  });
+  return newU;
+};
 const userRequest = {
   findAll,
   findById,
@@ -103,5 +116,6 @@ const userRequest = {
   getUsersByListsId,
   addNotification,
   seenNotify,
+  updateInfor,
 };
 export default userRequest;

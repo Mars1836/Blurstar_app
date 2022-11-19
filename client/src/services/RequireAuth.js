@@ -6,6 +6,7 @@ import userRequest from "../httprequest/user";
 import { createContext } from "react";
 import { useDispatch } from "react-redux";
 import { mainUserApiAction } from "~/store/actions/mainUserAction";
+import { postApiAction } from "~/store/actions/postAction";
 const UserContext = createContext(null);
 function RequireAuth({ children }) {
   const [user, setUser] = useState();

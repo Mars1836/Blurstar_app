@@ -11,6 +11,7 @@ import UnfollowBtn from "~/components/FollowBtn/UnfollowBtn";
 import FollowBtn from "~/components/FollowBtn/FollowBtn";
 import socket from "~/SocketIO/socket";
 import { useSelector } from "react-redux";
+import useBreakpoint from "~/hooks/useBreakpoint";
 const cx = classNames.bind(styles);
 const border = {
   border: "1px solid #DBDBDB",
@@ -32,15 +33,17 @@ const fill = {
   background: "var(--blue-3)",
 };
 const Head = ({ author, isAuthor }) => {
-  const userFollowing = useSelector((state) => state.mainUser?.data?.following);
+  const { isMobile } = useBreakpoint();
   const isFollowing = useSelector((state) => {
     const following = state.mainUser.data?.following;
     if (following) {
       return following.includes(author?._id);
     }
   });
-  const [followers, setFollowers] = useState(author?.followers);
-  const [following, setFollowing] = useState(author?.following);
+  const [followers, setFollowers] = useState(author?.followers || []);
+  const [following, setFollowing] = useState(author?.following || []);
+  const [followersData, setFollowersData] = useState([]);
+  const [followingData, setFollowingData] = useState([]);
   useEffect(() => {
     socket.on("get-follow-user", (userId, mainUserId) => {
       if (author?._id === userId) {
@@ -60,9 +63,6 @@ const Head = ({ author, isAuthor }) => {
     setFollowers(author?.followers);
     setFollowing(author?.following);
   }, [author]);
-  function getListUsers(list) {
-    return userRequest.getUsersByListsId(list);
-  }
 
   return (
     <div className={cx("wrapper")}>
@@ -72,7 +72,7 @@ const Head = ({ author, isAuthor }) => {
             <Avatar
               username={author?.name}
               url={author?.avatar}
-              size={150}
+              size={!isMobile ? 125 : 100}
               link={0}
             ></Avatar>
           </Button>
@@ -83,7 +83,11 @@ const Head = ({ author, isAuthor }) => {
             {isAuthor ? (
               <>
                 {" "}
-                <Button style={border}>Edit profile</Button>
+                {!isMobile && (
+                  <Button style={border} to="/account/edit">
+                    Edit profile
+                  </Button>
+                )}
                 <Button>
                   <svg
                     aria-label="Options"
@@ -151,30 +155,57 @@ const Head = ({ author, isAuthor }) => {
               </>
             )}
           </div>
-          <div className={cx("parameter")}>
-            <span>{author?.posts?.length} posts</span>
-            <Button
-              dialog={
-                <LikeModel
-                  listUser={getListUsers(followers)}
-                  title="Followers"
-                ></LikeModel>
-              }
-            >
-              {followers?.length} followers
+
+          {isMobile && (
+            <Button style={border} to="/account/edit">
+              Edit profile
             </Button>
-            <Button
-              dialog={
-                <LikeModel
-                  listUser={getListUsers(following)}
-                  title="Following"
-                ></LikeModel>
-              }
-            >
-              {following?.length} following
-            </Button>
-          </div>
+          )}
+
+          {!isMobile && (
+            <div className={cx("parameter")}>
+              <div className={cx("item")}>
+                <span>{author?.posts?.length}</span>
+                <span>posts</span>
+              </div>
+              <Button
+                dialog={
+                  <LikeModel
+                    listUsers={followersData}
+                    title="Followers"
+                  ></LikeModel>
+                }
+                className={cx("item")}
+                onClick={() => {
+                  userRequest.getUsersByListsId(followers).then(({ data }) => {
+                    setFollowersData(data);
+                  });
+                }}
+              >
+                <span>{followers?.length}</span>
+                <span>followers</span>
+              </Button>
+              <Button
+                dialog={
+                  <LikeModel
+                    listUsers={followingData}
+                    title="Following"
+                  ></LikeModel>
+                }
+                className={cx("item")}
+                onClick={() => {
+                  userRequest.getUsersByListsId(following).then(({ data }) => {
+                    setFollowingData(data);
+                  });
+                }}
+              >
+                <span>{following?.length}</span>
+                <span>following</span>
+              </Button>
+            </div>
+          )}
           <h2 className={cx("name")}>{author?.name}</h2>
+          <div className={cx("bio")}>{author?.bio}</div>
         </div>
       </div>
       <div className={cx("tab")}>

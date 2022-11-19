@@ -1,11 +1,13 @@
 .post {
   width: 100%;
-
   background-color: #fff;
   padding: 0;
 }
-
+.post-dialog {
+  border-radius: 5px;
+}
 .post-item {
+  border-radius: 4px;
   box-shadow: 0 0 2px rgb(153, 153, 153);
   .post-head {
     padding: 10px 10px 0 10px;
@@ -161,8 +163,9 @@
 }
 .post-dialog {
   width: 1000px;
-  height: 700px;
+  height: 650px;
   // overflow: hidden;
+
   .post-item {
     position: relative;
     display: flex;

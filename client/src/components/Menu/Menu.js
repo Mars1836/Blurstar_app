@@ -41,7 +41,14 @@ const Menu = ({ component, items, children, style, ...props }) => {
           </div>
         )}
       >
-        <span onClick={visible ? hide : show}>{children}</span>
+        <span
+          onClick={visible ? hide : show}
+          style={{
+            lineHeight: "0px",
+          }}
+        >
+          {children}
+        </span>
       </Tippy>
     </>
   );

@@ -59,9 +59,7 @@ function PostSite() {
     }
   }, [dataPost]);
   useEffect(() => {
-    return () => {
-      localStorage.setItem("dataURL", dataURL);
-    };
+    localStorage.setItem("dataURL", dataURL);
   }, [dataURL]);
   const handleClick = (e) => {
     e.stopPropagation();

@@ -13,7 +13,7 @@ import Notification from "../Notifications/Notification";
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
 const cx = classNames.bind(styles);
-const Action = () => {
+const Action = ({ searchUser }) => {
   const userUsername = useSelector((state) => state.mainUser?.data?.username);
   const userName = useSelector((state) => state.mainUser?.data?.name);
   const userAvatar = useSelector((state) => state.mainUser?.data?.avatar);
@@ -35,6 +35,14 @@ const Action = () => {
   const cookies = new Cookies();
   const navigate = useNavigate();
   const actions = [
+    {
+      title: "search",
+      icon: iconHeader.search,
+      action: () => {
+        searchUser(true);
+      },
+      className: "l-0 m-0",
+    },
     {
       title: "home",
       icon: iconHeader.home,
@@ -239,7 +247,7 @@ const Action = () => {
           }
           if (action.title === "notification" && action.menu) {
             return (
-              <div key={index}>
+              <div className={cx("notify-wapper")} key={action.title}>
                 <Menu
                   component={<Notification></Notification>}
                   style={{ minWidth: "300px", height: "500px" }}
@@ -252,17 +260,18 @@ const Action = () => {
                       handleCurrentAction(action.title);
                       action.action();
                     }}
+                    style={{
+                      lineHeight: "0px",
+                    }}
                     dialog={component}
                     componentOnHide={handleActionStop}
                   >
-                    <div className={cx("notify-wapper")}>
-                      {icon}
-                      {currentAction !== action.title && num !== 0 && (
-                        <span className={cx("notify-bg")}>
-                          <span className={cx("notify-num")}>{num}</span>
-                        </span>
-                      )}
-                    </div>
+                    {icon}
+                    {currentAction !== action.title && num !== 0 && (
+                      <span className={cx("notify-bg")}>
+                        <span className={cx("notify-num")}>{num}</span>
+                      </span>
+                    )}
                   </Button>
                 </Menu>
               </div>
@@ -272,12 +281,16 @@ const Action = () => {
             <Button
               key={index}
               {...action.props}
+              style={{
+                lineHeight: "0px",
+              }}
               onClick={() => {
                 handleCurrentAction(action.title);
                 action.action();
               }}
               dialog={component}
               componentOnHide={handleActionStop}
+              className={action.className}
             >
               {icon}
             </Button>
@@ -289,6 +302,9 @@ const Action = () => {
             className="avatar-btn"
             onClick={() => {
               handleCurrentAction("userOpiton");
+            }}
+            style={{
+              lineHeight: "0px",
             }}
           >
             <Avatar username={userName} url={userAvatar} size={25}></Avatar>

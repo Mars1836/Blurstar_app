@@ -9,6 +9,7 @@ const mainUserType = {
   updateAvatar: "FETCH_UPDATE_AVATAR",
   getNotification: "GET_NOTIFICATION",
   seenNotify: "SEEN_NOTIFY",
+  updateInfor: "UPDATE_INFOR",
 };
 
 export default mainUserType;

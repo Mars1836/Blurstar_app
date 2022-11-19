@@ -16,6 +16,8 @@ function Comment({
   setLoadingComment,
   avtSize = 35,
   isReply = false,
+  postId,
+  commentParentId,
 }) {
   const inputComment = createRef();
   const [comment, setComment] = useState(data);
@@ -25,6 +27,7 @@ function Comment({
   const [isShowReply, setIsShowReply] = useState(false);
   const [commentPage, setCommentPage] = useState(1);
   const limitLoad = 6;
+
   useEffect(() => {
     userRequest
       .findById(data.userid)
@@ -45,6 +48,7 @@ function Comment({
       }
     });
     socket.on("get-remove-comment", (commentId) => {
+      console.log(commentId);
       if (commentId === data._id) {
         getRemove(commentId);
       }
@@ -73,11 +77,23 @@ function Comment({
   useEffect(() => {
     inputComment.current?.focus();
   }, [isShowReply]);
+
   function removeFromListParent(id) {
-    const arr = comments.filter((comment) => {
-      return comment._id !== id;
+    console.log(id);
+    console.log(comment);
+    setComment((cm) => {
+      return {
+        ...cm,
+        comments: cm.comments.filter((commentId) => {
+          return commentId !== id;
+        }),
+      };
     });
-    setComments(arr);
+    setComments((cms) => {
+      return cms.filter((cm) => {
+        return cm._id !== id;
+      });
+    });
   }
   return (
     <>
@@ -88,9 +104,13 @@ function Comment({
             showName
             comment={data}
             size={avtSize || 35}
+            postId={postId}
+            isReply={isReply}
             showReply={() => {
               setIsShowReply(true);
             }}
+            getRemove={removeFromListParent}
+            commentParentId={commentParentId}
           >
             {data.content}
           </AvatarComment>
@@ -154,6 +174,8 @@ function Comment({
                         avtSize={30}
                         isReply={true}
                         getRemove={removeFromListParent}
+                        postId={postId}
+                        commentParentId={comment._id}
                       ></Comment>
                     </div>
                   );

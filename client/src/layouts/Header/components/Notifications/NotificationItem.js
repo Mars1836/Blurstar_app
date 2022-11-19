@@ -69,7 +69,14 @@ function NotificationItem({
   }
   return (
     <Button
-      dialog={<PostDialog postId={postId}></PostDialog>}
+      dialog={
+        (type === notifications.commentPost ||
+          type === notifications.upPost ||
+          type === notifications.likePost ||
+          type === notifications.replyComment) && (
+          <PostDialog postId={postId}></PostDialog>
+        )
+      }
       className={cx("noti_item_wrapper")}
       onClick={() => {
         dispatch(mainUserApiAction.fetchSeenNotify(_userId, id));

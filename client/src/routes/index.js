@@ -1,3 +1,4 @@
+import HeaderLayout from "~/layouts/HeaderLayout/HeaderLayout";
 import configs from "../configs";
 import pages from "../pages";
 const privateRoute = [
@@ -12,6 +13,11 @@ const privateRoute = [
   {
     path: configs.routes.inbox,
     component: pages.Inbox,
+  },
+  {
+    path: configs.routes.accountEdit,
+    component: pages.AccountEdit,
+    layout: HeaderLayout,
   },
 ];
 const publicRoute = [

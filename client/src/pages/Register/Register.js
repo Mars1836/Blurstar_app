@@ -24,7 +24,7 @@ const schema = yup
     username: yup
       .string()
       .required()
-      .matches(/^[a-z][a-z]+\d*$|^[a-z]\d\d+$/, "this username is not valid"),
+      .matches(/^[a-z][a-z]+\d*$|^[a-z]\d\d+$/, "This username is not valid"),
     email: yup
       .string()
       .required()

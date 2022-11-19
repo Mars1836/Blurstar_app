@@ -32,7 +32,7 @@ function Unfollow({ author, handleUnFollow, text = "Unfollow" }) {
         </button>
         <button
           onClick={() => {
-            model.setClose();
+            model.handleClose();
           }}
         >
           Cancel

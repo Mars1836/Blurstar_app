@@ -4,5 +4,6 @@ const routes = {
   login: "/login",
   register: "/register",
   inbox: "/inbox",
+  accountEdit: "/account/edit",
 };
 export default routes;

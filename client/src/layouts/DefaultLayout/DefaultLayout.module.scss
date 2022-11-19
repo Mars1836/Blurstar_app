@@ -4,5 +4,8 @@
 .content {
   width: 100%;
   margin-top: 60px;
-  background-color: rgb(240, 242, 245);
+  background-color: var(--page-background);
+  display: flex;
+  align-items: flex-start;
+  gap: 60px;
 }

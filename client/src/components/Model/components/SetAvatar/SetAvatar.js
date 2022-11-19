@@ -9,8 +9,14 @@ import { Slider } from "@mui/material";
 import { Button } from "@mui/material";
 import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
 import LoadingPage from "~/components/Loading/LoadingPage";
+import { useDispatch, useSelector } from "react-redux";
+import { ModelContext } from "../../Model";
+import { useContext } from "react";
+import { mainUserApiAction } from "~/store/actions/mainUserAction";
 const cx = classnames.bind(styles);
 function SetAvatar() {
+  const model = useContext(ModelContext);
+  const dispatch = useDispatch();
   const [fileValue, setFileValue] = useState("");
   const [dataSource, setDataSource] = useState("");
   const [fileUpload, setFileUpload] = useState("");
@@ -18,7 +24,7 @@ function SetAvatar() {
   const [cropURL, setCropURL] = useState("");
   const [size, setSize] = useState(50);
   const [loading, setLoading] = useState(false);
-  const { user, setReload } = useUser();
+  const userId = useSelector((state) => state.mainUser.data?._id);
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
@@ -26,7 +32,9 @@ function SetAvatar() {
     const reader = new FileReader();
     reader.readAsDataURL(fileUpload);
     reader.onloadend = () => {
-      uploadImage(cropURL);
+      setLoading(false);
+      model.handleClose();
+      dispatch(mainUserApiAction.fetchUpdateAvatar(cropURL, userId));
     };
   };
   const handleFileUploadChange = (e) => {
@@ -47,14 +55,7 @@ function SetAvatar() {
       console.error("AHHHHHHHH!!");
     };
   };
-  const uploadImage = (base64EncodedImage) => {
-    userRequest
-      .userUploadAvatar(base64EncodedImage, user._id)
-      .then(() => {})
-      .finally(() => {
-        window.location.reload();
-      });
-  };
+
   var cropperRef = useRef(null);
   const handleCrop = function () {
     setCropURL(cropper.getCroppedCanvas().toDataURL());

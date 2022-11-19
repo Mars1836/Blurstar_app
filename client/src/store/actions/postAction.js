@@ -5,6 +5,9 @@ export const postAction = {
   getPostSuccess: (payload) => {
     return { type: postType.getPostSuccess, payload };
   },
+  getPostSuggestRequest: (payload) => {
+    return { type: postType.getPostSuggestRequest, payload };
+  },
   getPostRequest: (payload) => {
     return { type: postType.getPostRequest, payload };
   },
@@ -20,6 +23,9 @@ export const postAction = {
   removeCommentPost: (payload) => {
     return { type: postType.removeCommentPost, payload };
   },
+  removeReplyComment: (payload) => {
+    return { type: postType.removeReplyComment, payload };
+  },
   likePost: (payload) => {
     return { type: postType.likePost, payload };
   },
@@ -34,6 +40,9 @@ export const postAction = {
   },
   getSuggestedPost: (payload) => {
     return { type: postType.getSuggestedPost, payload };
+  },
+  deleteSuggestPost: (payload) => {
+    return { type: postType.deleteSuggestedPost, payload };
   },
 };
 export const postApiAction = {
@@ -108,10 +117,11 @@ export const postApiAction = {
         });
     };
   },
-  fetchGetSuggestedPost: (userId) => {
+  fetchGetSuggestedPost: (userId, num, callback) => {
     return (dispatch) => {
-      postRequest.getRecommendPostId(userId).then(({ data }) => {
+      postRequest.getRecommendPostId(userId, num).then(({ data }) => {
         dispatch(postAction.getSuggestedPost(data));
+        callback(false);
       });
     };
   },

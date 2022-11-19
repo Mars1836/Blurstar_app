@@ -31,6 +31,12 @@ export const mainUserAction = {
       payload,
     };
   },
+  updateInfor: (payload) => {
+    return {
+      type: mainUserType.updateInfor,
+      payload,
+    };
+  },
   getNotification: (payload) => {
     return {
       type: mainUserType.getNotification,
@@ -77,11 +83,14 @@ export const mainUserApiAction = {
         .catch();
     };
   },
-  fetchUpdateAvatar: (payload) => {
+  fetchUpdateAvatar: (base64EncodedImage, userId) => {
     return (dispatch) => {
-      userRequest.userUploadAvatar(payload).then(({ data }) => {
-        dispatch(mainUserAction.updateAvatar(data));
-      });
+      userRequest
+        .userUploadAvatar(base64EncodedImage, userId)
+        .then(({ data }) => {
+          console.log(data);
+          dispatch(mainUserAction.updateAvatar(data));
+        });
     };
   },
   fetchCreateNotification: (userId, notify) => {
@@ -93,6 +102,9 @@ export const mainUserApiAction = {
     };
   },
   fetchSeenNotify: (userId, notifyId) => {
+    if (!Array.isArray(notifyId)) {
+      notifyId = [notifyId];
+    }
     return (dispatch) => {
       userRequest.seenNotify(userId, notifyId).then(() => {
         dispatch(mainUserAction.seenNotify(notifyId));

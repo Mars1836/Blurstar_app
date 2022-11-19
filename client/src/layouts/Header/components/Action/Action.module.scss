@@ -5,6 +5,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: 20px;
+  width: 100%;
   .avatar {
     width: 2.4rem;
     height: 2.4rem;
@@ -12,6 +13,8 @@
   }
 }
 .notify-wapper {
+  width: 28px;
+  height: 28px;
   position: relative;
   .notify-bg {
     display: flex;
@@ -28,5 +31,10 @@
     position: absolute;
     top: -5px;
     right: -5px;
+  }
+}
+@media (max-width: 740px) {
+  .action {
+    gap: 10px;
   }
 }

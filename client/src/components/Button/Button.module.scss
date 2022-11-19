@@ -9,6 +9,10 @@
   div {
     display: flex;
     align-items: center;
+    justify-content: center;
+  }
+  .contain {
+    width: 100%;
   }
 }
 .wrapper[disabled] {

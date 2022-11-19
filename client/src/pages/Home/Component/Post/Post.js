@@ -22,13 +22,13 @@ import commentRequest from "~/httprequest/comment.js";
 import Text from "./Text.js";
 import { useDispatch, useSelector } from "react-redux";
 import { postAction, postApiAction } from "~/store/actions/postAction";
+import { Skeleton } from "@mui/material";
 const cx = classNames.bind(styles);
 function Post({ postid, status }) {
-  const userid = useSelector((state) => state.mainUser.data._id);
+  const userid = useSelector((state) => state.mainUser.data?._id);
   const dispatch = useDispatch();
   const postId = useSelector((state) => state.posts.byId[postid]?._id);
   if (!postId) {
-    console.log(postId);
     dispatch(postApiAction.postFetchApi([postid]));
   }
   const comments = useSelector((state) => state.posts.byId[postid]?.comments);
@@ -149,6 +149,9 @@ function Post({ postid, status }) {
       icon: (
         <HideSourceRoundedIcon sx={{ fontSize: 20 }}></HideSourceRoundedIcon>
       ),
+      action: () => {
+        dispatch(postAction.deleteSuggestPost(postid));
+      },
     },
     {
       title: "Save",
@@ -165,148 +168,153 @@ function Post({ postid, status }) {
       title: "Remove",
       icon: <DeleteIcon sx={{ fontSize: 20 }}></DeleteIcon>,
       action: () => {
+        dispatch(postAction.deleteSuggestPost(postid));
         dispatch(postApiAction.fetchRemovePost(postid));
       },
     },
   ];
 
   function removeFromListParent(id) {
-    // const arr = comments.filter((comment) => {
-    //   return comment._id !== id;
-    // });
+    dispatch(postAction.removeCommentPost({ postId: postId, commentId: id }));
   }
-  return (
-    !postId || (
-      <div
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-        status={status}
-      >
-        <div className={cx("post-item")}>
-          <div className={cx("post-head")}>
-            <AvatarName
-              username={author?.username}
-              url={author?.avatar}
-              size={35}
-              status={
-                <Tippy
-                  content={getDate(0)}
-                  placement="bottom-start"
-                  theme="tomato"
-                  arrow={false}
-                  offset={[-10, 0]}
-                >
-                  <Button text={1}>{date}</Button>
-                </Tippy>
-              }
-            ></AvatarName>
-            <Menu items={isAuthor ? authorOptions : userOptions}>
-              <IconButton size="small">
-                <MoreHorizIcon fontSize="large"></MoreHorizIcon>
-              </IconButton>
-            </Menu>
+  return !postId ? (
+    <Skeleton
+      variant="rectangular"
+      height={180}
+      animation="wave"
+      sx={{ bgcolor: "lightgray" }}
+    />
+  ) : (
+    <div
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
+      status={status}
+    >
+      <div className={cx("post-item")}>
+        <div className={cx("post-head")}>
+          <AvatarName
+            username={author?.username}
+            url={author?.avatar}
+            size={35}
+            status={
+              <Tippy
+                content={getDate(0)}
+                placement="bottom-start"
+                theme="tomato"
+                arrow={false}
+                offset={[-10, 0]}
+              >
+                <Button text={1}>{date}</Button>
+              </Tippy>
+            }
+          ></AvatarName>
+          <Menu items={isAuthor ? authorOptions : userOptions}>
+            <IconButton size="small">
+              <MoreHorizIcon fontSize="large"></MoreHorizIcon>
+            </IconButton>
+          </Menu>
+        </div>
+        <div className={cx("cap")}>
+          <span className={cx("post-content")} ref={postContent}>
+            <Text text={text.current}></Text>
+            {text2.current && (
+              <>
+                {isShowAllCap ? (
+                  <Text text={text2.current}></Text>
+                ) : (
+                  <Button
+                    style={{ color: "#ba2121", display: "inline-block" }}
+                    onClick={() => {
+                      setIsShowAllCap(true);
+                    }}
+                  >
+                    ...See more
+                  </Button>
+                )}
+              </>
+            )}
+          </span>
+        </div>
+        {content.data && (
+          <div className={cx("wapper-image")}>
+            <img src={content.data} className={cx("post-image")}></img>
           </div>
-          <div className={cx("cap")}>
-            <span className={cx("post-content")} ref={postContent}>
-              <Text text={text.current}></Text>
-              {text2.current && (
+        )}
+        <Interaction
+          inputComment={inputComment}
+          postId={postid}
+          commentsQuantity={comments.length}
+          handleCommentMount={{ setIsCommentMount, isCommentMount }}
+        />
+        {isCommentMount && (
+          <div className={cx("comment-site")}>
+            <CommentInput
+              post={true}
+              ref={inputComment}
+              postId={postid}
+            ></CommentInput>
+            <div className={cx("comment-users")}>
+              {commentsloaded?.allIds && (
                 <>
-                  {isShowAllCap ? (
-                    <Text text={text2.current}></Text>
-                  ) : (
-                    <Button
-                      style={{ color: "#ba2121", display: "inline-block" }}
-                      onClick={() => {
-                        setIsShowAllCap(true);
-                      }}
-                    >
-                      ...See more
-                    </Button>
+                  {commentsloaded.allIds.map((id, index) => {
+                    return (
+                      <Comment
+                        postId={postId}
+                        data={commentsloaded.byId[id]}
+                        key={id}
+                        getRemove={removeFromListParent}
+                        setLoading={setIsLoadingComment}
+                        setLoadingComment={
+                          index === commentsloaded.allIds?.length - 1
+                            ? () => {
+                                setIsLoadingComment(false);
+                              }
+                            : ""
+                        }
+                      ></Comment>
+                    );
+                  })}
+                  {isLoadingComment && commentsloaded.allIds?.length > 0 && (
+                    <LoadingComment></LoadingComment>
                   )}
                 </>
               )}
-            </span>
-          </div>
-          {content.data && (
-            <div className={cx("wapper-image")}>
-              <img src={content.data} className={cx("post-image")}></img>
             </div>
-          )}
-          <Interaction
-            inputComment={inputComment}
-            postId={postid}
-            commentsQuantity={comments.length}
-            handleCommentMount={{ setIsCommentMount, isCommentMount }}
-          />
-          {isCommentMount && (
-            <div className={cx("comment-site")}>
-              <CommentInput
-                post={true}
-                ref={inputComment}
-                postId={postid}
-              ></CommentInput>
-              <div className={cx("comment-users")}>
-                {commentsloaded?.allIds && (
-                  <>
-                    {commentsloaded.allIds.map((id, index) => {
-                      return (
-                        <Comment
-                          data={commentsloaded.byId[id]}
-                          key={id}
-                          getRemove={removeFromListParent}
-                          setLoading={setIsLoadingComment}
-                          setLoadingComment={
-                            index === commentsloaded.allIds?.length - 1
-                              ? () => {
-                                  setIsLoadingComment(false);
-                                }
-                              : ""
-                          }
-                        ></Comment>
-                      );
-                    })}
-                    {isLoadingComment && commentsloaded.allIds?.length > 0 && (
-                      <LoadingComment></LoadingComment>
-                    )}
-                  </>
-                )}
-              </div>
-              {comments.length > commentsloaded.allIds?.length && (
-                <div className={cx("loadmore")}>
-                  <Button
-                    underline={1}
-                    onClick={() => {
-                      setCommentPage(commentPage + 1);
-                    }}
-                  >
-                    View more comments
-                  </Button>
-                  <p>
-                    {commentsloaded.allIds?.length} of {comments.length}
-                  </p>
-                </div>
-              )}
-
-              {commentsloaded.allIds?.length > 5 && (
+            {comments.length > commentsloaded.allIds?.length && (
+              <div className={cx("loadmore")}>
                 <Button
                   underline={1}
                   onClick={() => {
-                    inputComment.current?.focus({ preventScroll: true });
-                    inputComment.current?.scrollIntoView({
-                      behavior: "smooth",
-                      block: "center",
-                    });
+                    setCommentPage(commentPage + 1);
                   }}
                 >
-                  Write a comment...
+                  View more comments
                 </Button>
-              )}
-            </div>
-          )}
-        </div>
+                <p>
+                  {commentsloaded.allIds?.length} of {comments.length}
+                </p>
+              </div>
+            )}
+
+            {commentsloaded.allIds?.length > 5 && (
+              <Button
+                underline={1}
+                onClick={() => {
+                  inputComment.current?.focus({ preventScroll: true });
+                  inputComment.current?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center",
+                  });
+                }}
+              >
+                Write a comment...
+              </Button>
+            )}
+          </div>
+        )}
       </div>
-    )
+    </div>
   );
 }
 export default Post;

@@ -1,8 +1,15 @@
 $search-height: 36px;
 .search-form {
-  width: 268px;
+  width: 100%;
   height: $search-height;
   position: relative;
+  [data-tippy-root] {
+    width: 100%;
+  }
+}
+
+.user_search {
+  width: 100%;
 }
 .search-input {
   width: 100%;
@@ -57,14 +64,14 @@ $search-height: 36px;
   top: 8px;
   animation: rotating 1s linear infinite;
 }
-
 .wrapper {
+  width: 100%;
   background: var(--ig-primary-background);
   border-radius: 6px;
   box-shadow: 0 0 2px rgb(134, 134, 134);
 }
 .item {
-  width: 230px;
+  width: 100%;
   line-height: 0;
   padding: 8px 16px;
   cursor: pointer;

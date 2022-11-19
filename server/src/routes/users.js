@@ -9,6 +9,7 @@ userRouter.post("/findlist", userController.getUsersByListId);
 userRouter.get("/except/:id", userController.findExceptId);
 userRouter.delete("/:id"), userRouter.put("/:id");
 userRouter.post("/uploadavatar/:userid", userController.uploadAvatar);
+userRouter.post("/update", userController.updateInfor);
 userRouter.get("/find_by_username/:username", userController.findByUsername);
 userRouter.post("/follow", userController.getFollowing);
 userRouter.post("/unfollow", userController.getUnFollowing);

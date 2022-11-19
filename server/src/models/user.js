@@ -11,6 +11,8 @@ const userSchema = new mongoose.Schema(
     followers: [mongoose.Types.ObjectId],
     saved: [mongoose.Types.ObjectId],
     posts: [mongoose.Types.ObjectId],
+    bio: { type: String, default: "" },
+    phone: { type: String, default: "" },
     notifications: [
       {
         id: { type: String, unique: true },

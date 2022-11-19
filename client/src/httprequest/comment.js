@@ -1,6 +1,6 @@
 import configs from "../configs";
 import instance from "../configs/axios";
-import axios from "axios";
+import notifications from "~/configs/notification";
 import socket from "~/SocketIO/socket";
 const apiRoute = {
   getCommentById: `/api/comments/`,
@@ -8,8 +8,8 @@ const apiRoute = {
   getListComment: `/api/comments/findlist`,
   addComment: `/api/comments/addcomment/`,
   removeComment: `/api/comments/`,
+  removeReply: `/api/comments/reply/`,
 };
-const notifications = { configs };
 const commentRequest = {
   getCommentById: () => {},
   getAllComment: () => {},
@@ -22,21 +22,29 @@ const commentRequest = {
     });
     return comments;
   },
-  addComment: async (commentId, newComment) => {
+  addComment: async (commentId, newComment, to) => {
     const comment = await instance.post(`${apiRoute.addComment + commentId}`, {
       userid: newComment.userid,
       content: newComment.content,
     });
     socket.emit("reply", comment.data, commentId);
-    socket.emit("notification", notifications.commentPost, {
-      target: commentId,
-      from: newComment.userid,
-    });
+    // socket.emit("notification", to, {
+    //   type: notifications.likePost,
+    //   postId,
+    //   userId,
+    // });
     return comment;
   },
-  removeComment: async (commentId) => {
+  removeComment: async (commentId, postId, commentParentId) => {
     const comment = await instance.delete(
-      `${apiRoute.removeComment + commentId}`
+      `${apiRoute.removeComment + commentId}`,
+      {
+        data: {
+          postId,
+          commentId,
+          commentParentId,
+        },
+      }
     );
     socket.emit("remove-comment", commentId);
     return comment;

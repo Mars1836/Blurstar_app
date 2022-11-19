@@ -193,7 +193,6 @@ const userController = {
         createAt: new Date(),
         id: uuidv4(),
       };
-      console.log(notification);
       const id = req.params.id;
       const noti = await User.updateOne(
         { _id: id },
@@ -217,10 +216,27 @@ const userController = {
       },
       { "notifications.$[filter].seen": true },
       {
-        arrayFilters: [{ "filter.id": { $eq: notifications } }],
+        arrayFilters: [{ "filter.id": { $in: notifications } }],
       }
     );
     res.status(200).json(update);
+  },
+  updateInfor: async (req, res) => {
+    const infor = req.body.infor;
+    const userId = req.body.userId;
+    try {
+      const newUser = await User.updateOne(
+        { _id: userId },
+        {
+          $set: {
+            ...infor,
+          },
+        }
+      );
+      res.status(200).json(newUser);
+    } catch (error) {
+      res.status(500).json({ error: new Error(error) });
+    }
   },
 };
 export default userController;

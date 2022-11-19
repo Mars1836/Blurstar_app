@@ -16,7 +16,6 @@ function AvatarBox({ username, url, name, avtLarge, btn }) {
       ></Avatar>
       <span className={cx("item-text")}>
         <Link to={`/profile/${username}`} className={cx("username")}>
-          {" "}
           {username}
         </Link>
         <p className={cx("name")}>{name}</p>

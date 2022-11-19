@@ -9,13 +9,24 @@ import commentRequest from "~/httprequest/comment";
 import { IconButton } from "@mui/material";
 import Menu from "~/components/Menu";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { postAction } from "~/store/actions/postAction";
 const cx = classNames.bind(styles);
-function AvatarComment({ size, user, showName, showReply, comment }) {
+function AvatarComment({
+  size,
+  user,
+  showName,
+  showReply,
+  comment,
+  postId,
+  commentParentId,
+  isReply,
+}) {
   const mainUserId = useSelector((state) => state.mainUser.data._id);
   const content = useRef(null);
   const [time, setTime] = useState();
   const [isAuthor, setIsAuthor] = useState(false);
+  const dispatch = useDispatch();
   useEffect(() => {
     content.current.innerText = comment.content;
     const date = new Date(comment.createdAt);
@@ -72,9 +83,26 @@ function AvatarComment({ size, user, showName, showReply, comment }) {
                       {
                         title: "Remove comment",
                         action: () => {
-                          commentRequest
-                            .removeComment(comment._id)
-                            .then(({ data }) => {});
+                          if (!isReply) {
+                            commentRequest
+                              .removeComment(comment._id, postId)
+                              .then(({ data }) => {});
+                            dispatch(
+                              postAction.removeCommentPost({
+                                postId,
+                                commentId: comment._id,
+                              })
+                            );
+                          } else {
+                            console.log(commentParentId);
+                            commentRequest
+                              .removeComment(
+                                comment._id,
+                                postId,
+                                commentParentId
+                              )
+                              .then(({ data }) => {});
+                          }
                         },
                       },
                     ]

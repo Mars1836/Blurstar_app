@@ -11,12 +11,24 @@ function AvatarName({
   status,
   nameStyle,
   underline = "true",
+  isLink = true,
 }) {
+  let Com = Link;
+  let link = true;
+  if (!isLink) {
+    Com = "span";
+    link = false;
+  }
   return (
     <div className={cx("wrapper")}>
-      <Avatar size={size || 30} username={username} url={url} link></Avatar>
+      <Avatar
+        size={size || 30}
+        username={username}
+        url={url}
+        link={link}
+      ></Avatar>
       <div className={cx("contain")}>
-        <Link
+        <Com
           to={`/profile/${username}`}
           className={cx("user-name")}
           style={{
@@ -27,7 +39,7 @@ function AvatarName({
           underline={underline}
         >
           {username}
-        </Link>
+        </Com>
         <span className={cx("status")}>{status}</span>
       </div>
     </div>

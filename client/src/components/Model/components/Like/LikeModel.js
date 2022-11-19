@@ -11,17 +11,18 @@ const LikeModel = ({ title, listUsers }) => {
     <div className={cx("wrapper")} onClick={handleClick}>
       <div className={cx("title")}>{title ? title : "Likes"}</div>
       <div className={cx("list")}>
-        {listUsers.map((user, index) => {
-          return (
-            <div className={cx("user")} key={index}>
-              <AvatarBox
-                username={user?.username}
-                url={user?.avatar}
-                name={user?.name}
-              ></AvatarBox>
-            </div>
-          );
-        })}
+        {listUsers &&
+          listUsers.map((user, index) => {
+            return (
+              <div className={cx("user")} key={index}>
+                <AvatarBox
+                  username={user?.username}
+                  url={user?.avatar}
+                  name={user?.name}
+                ></AvatarBox>
+              </div>
+            );
+          })}
       </div>
     </div>
   );

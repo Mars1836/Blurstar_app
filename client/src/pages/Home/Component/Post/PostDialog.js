@@ -262,11 +262,12 @@ function PostDialog({ postId: _postId, remove, status }) {
                     postId={_postId}
                   ></CommentInput>
                   <div className={cx("comment-users")}>
-                    {commentsloaded !== null && (
+                    {commentsloaded.allIds && (
                       <>
                         {commentsloaded.allIds.map((id, index) => {
                           return (
                             <Comment
+                              postId={postId}
                               data={commentsloaded.byId[id]}
                               key={id}
                               setLoading={setIsLoadingComment}

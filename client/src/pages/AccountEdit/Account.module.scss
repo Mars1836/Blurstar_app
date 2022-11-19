@@ -1,0 +1,122 @@
+.wapper {
+  margin-top: 20px;
+  width: 100%;
+  border: 1px solid var(--light-gray);
+  padding: 0 20% 50px 10%;
+}
+.avatar_edit {
+  margin: 35px 20%;
+  width: 100%;
+  display: flex;
+  .avatar_edit_child_1 {
+    margin-right: 30px;
+  }
+  .avatar_edit_child_2 {
+    flex: 1;
+  }
+  .username {
+    font-size: 1.3em;
+  }
+  .btn_edit_avatar {
+    color: var(--blue-3);
+    font-weight: 500;
+  }
+}
+.input {
+  border: 0.5px solid rgba($color: #000000, $alpha: 0.1);
+  width: 100%;
+  height: 32px;
+  margin-bottom: 18px;
+  transform: translate(0, -5px);
+}
+.field {
+  font-weight: 500;
+  font-size: 1.1em;
+  margin: 0 20px;
+}
+.group_input {
+  display: flex;
+  margin-left: auto;
+  width: 100%;
+}
+.input_wrap {
+  width: 80%;
+  margin-left: auto;
+}
+.detail {
+  font-size: 0.88em;
+  opacity: 0.8;
+  font-weight: 300;
+  line-height: 18px;
+  margin-bottom: 12px;
+}
+.detail_title {
+  font-size: 1em;
+  opacity: 0.5;
+  font-weight: 500;
+}
+.submit_btn {
+  background-color: var(--blue-3);
+  padding: 8px 14px;
+  color: #fff;
+  border-radius: 4px;
+  &:active {
+    opacity: 0.6;
+  }
+}
+.textarea {
+  resize: vertical;
+
+  height: 60px;
+  padding: 4px;
+  margin-bottom: 10px;
+}
+.text-error {
+  margin-top: -15px;
+  color: red;
+  margin-bottom: 5px;
+}
+input[disabled] {
+  opacity: 0.5;
+  user-select: none;
+  pointer-events: none;
+}
+@media (max-width: 1320px) {
+  .input_wrap {
+    width: 70%;
+    margin-left: auto;
+  }
+}
+@media (max-width: 812px) {
+  .wapper {
+    padding: 0 30px 50px 26px;
+  }
+  .avatar_edit {
+    margin: 35px 15px;
+  }
+  .field {
+    margin: 0;
+  }
+}
+
+@media (max-width: 631px) {
+  .wapper {
+    padding: 0 20px 50px 26px;
+  }
+  .avatar_edit {
+    margin: 35px 15px;
+  }
+  .field {
+    margin-bottom: 10px;
+  }
+  .group_input {
+    flex-direction: column;
+  }
+  .input_wrap {
+    width: 100%;
+    margin-left: 0;
+  }
+  .submit_btn {
+    width: 100%;
+  }
+}
