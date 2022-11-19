@@ -57,7 +57,9 @@ function Login() {
     <div className={cx("wrapper")}>
       <div className={cx("container")}>
         <div className={cx("login-container")}>
-          <Logo large={200}></Logo>
+          <div className={cx("logo")}>
+            <Logo large={170}></Logo>
+          </div>
           <form
             className={cx("login-form")}
             onSubmit={handleSubmit(handleSubmitLogin)}
