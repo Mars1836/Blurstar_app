@@ -1,0 +1,26 @@
+{
+  "name": "blurstar",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000B\u0000l\u0000u\u0000r\u0000s\u0000t\u0000a\u0000r\u0000_\u0000a\u0000p\u0000p\u0000\r\u0000 \u0000",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "scripts": {
+    "start": "node server/src/index.js",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
+  },
+  "engines": {
+    "node": "16.14.2."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mars1836/Blurstar_app.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mars1836/Blurstar_app/issues"
+  },
+  "homepage": "https://github.com/Mars1836/Blurstar_app#readme"
+}
