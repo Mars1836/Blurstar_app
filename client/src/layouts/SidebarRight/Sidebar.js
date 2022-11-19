@@ -33,7 +33,7 @@ function Sidebar() {
         <Button className={cx("text-2")}>Xem tất cả</Button>
       </div>
       <div className={cx("list-user")}>
-        {users && (
+        {!!users?.length && (
           <>
             {users.map((user) => {
               return <UserItem user={user} key={user._id}></UserItem>;

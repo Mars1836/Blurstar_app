@@ -67,7 +67,6 @@ const postController = {
         res.status(500).json(error);
         return;
       }
-      console.log(newPost);
       res.status(200).json(newPost);
     });
   },
@@ -153,7 +152,6 @@ const postController = {
   },
   getRecommendPostId: async (req, res) => {
     const { num } = req.query;
-    console.log(num);
     const postIds = await Post.find({})
       .select("_id")
       .sort({ $natural: -1 })
