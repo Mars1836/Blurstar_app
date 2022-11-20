@@ -63,7 +63,9 @@ function Register() {
     <div className={cx("wrapper")}>
       <div className={cx("container")}>
         <div className={cx("register-container")}>
-          <Logo large={200}></Logo>
+          <div className={cx("logo")}>
+            <Logo large={170}></Logo>
+          </div>
           <form
             className={cx("register-form")}
             onSubmit={handleSubmit(registerAction)}
