@@ -25,7 +25,6 @@ function NotificationItem({
   const [text, setText] = useState("");
   const _userId = useSelector((state) => state.mainUser.data._id);
   useEffect(() => {
-    console.log(type);
     switch (type) {
       case notifications.likePost:
         setText("like your post ");

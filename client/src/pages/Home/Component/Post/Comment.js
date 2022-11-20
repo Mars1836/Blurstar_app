@@ -48,7 +48,6 @@ function Comment({
       }
     });
     socket.on("get-remove-comment", (commentId) => {
-      console.log(commentId);
       if (commentId === data._id) {
         getRemove(commentId);
       }
@@ -79,8 +78,6 @@ function Comment({
   }, [isShowReply]);
 
   function removeFromListParent(id) {
-    console.log(id);
-    console.log(comment);
     setComment((cm) => {
       return {
         ...cm,

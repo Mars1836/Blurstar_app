@@ -48,8 +48,9 @@ function Login() {
           navigate("/");
         }
       })
-      .catch(({ response }) => {
-        toast.error(response.data);
+      .catch((err) => {
+        console.log(err);
+        toast.error(err?.data || "GET ERROR");
       });
   };
 

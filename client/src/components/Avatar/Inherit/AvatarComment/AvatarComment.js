@@ -94,7 +94,6 @@ function AvatarComment({
                               })
                             );
                           } else {
-                            console.log(commentParentId);
                             commentRequest
                               .removeComment(
                                 comment._id,

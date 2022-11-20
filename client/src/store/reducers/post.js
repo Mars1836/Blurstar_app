@@ -20,7 +20,6 @@ const postReducer = produce((state = initState, action) => {
       state.loadingSuggestedPost = false;
       break;
     case postType.getPostSuggestRequest:
-      console.log("123");
       state.loadingSuggestedPost = true;
       break;
     case postType.getPostRequest:

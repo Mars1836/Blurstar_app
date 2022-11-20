@@ -46,9 +46,7 @@ const Action = ({ searchUser }) => {
     {
       title: "home",
       icon: iconHeader.home,
-      action: () => {
-        console.log("home");
-      },
+      action: () => {},
       props: {
         to: "/",
       },
@@ -57,9 +55,7 @@ const Action = ({ searchUser }) => {
       title: "inbox",
 
       icon: iconHeader.inbox,
-      action: () => {
-        console.log("inbox");
-      },
+      action: () => {},
       props: {
         to: "/inbox",
       },
@@ -149,9 +145,7 @@ const Action = ({ searchUser }) => {
         </svg>
       ),
       title: "Saved",
-      action: function () {
-        console.log("Saved");
-      },
+      action: function () {},
     },
     {
       icon: (
@@ -185,9 +179,7 @@ const Action = ({ searchUser }) => {
         </svg>
       ),
       title: "Settings",
-      action: function () {
-        console.log("Settings");
-      },
+      action: function () {},
     },
     {
       icon: (
@@ -205,9 +197,7 @@ const Action = ({ searchUser }) => {
         </svg>
       ),
       title: "Switch Accounts",
-      action: function () {
-        console.log("Switch Accounts");
-      },
+      action: function () {},
     },
     {
       title: "Log out",

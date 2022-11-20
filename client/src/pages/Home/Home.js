@@ -42,11 +42,6 @@ function Home() {
   }, []);
   useEffect(() => {
     function handleScroll() {
-      console.log(
-        window.innerHeight +
-          document.documentElement.scrollTop -
-          document.documentElement.offsetHeight
-      );
       if (
         window.innerHeight +
           document.documentElement.scrollTop -
@@ -66,13 +61,7 @@ function Home() {
 
   return (
     <div className={[cx("wrapper")]}>
-      <div
-        className={cx("post-site")}
-        ref={postSite}
-        onScroll={(e) => {
-          console.log(e.target.scrollTop);
-        }}
-      >
+      <div className={cx("post-site")} ref={postSite}>
         {suggestedPosts.map((ob) => {
           if (ob.show === true) {
             return <Post postid={ob.id} key={ob.id}></Post>;

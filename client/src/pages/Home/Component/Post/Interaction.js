@@ -23,9 +23,7 @@ function Interaction({
   const [isLiked, setIsLiked] = useState(likes.includes(userId));
   const [listUsers, setListUsers] = useState([]);
   useEffect(() => {
-    return () => {
-      console.log("clear");
-    };
+    return () => {};
   }, []);
 
   useEffect(() => {
@@ -39,7 +37,6 @@ function Interaction({
     if (isLiked) {
       dispatch(postApiAction.fetchUnlikePost(postId, userId));
     } else {
-      console.log("like");
       dispatch(postApiAction.fetchLikePost(postId, userId, authorPost));
     }
   };

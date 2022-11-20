@@ -88,7 +88,6 @@ export const mainUserApiAction = {
       userRequest
         .userUploadAvatar(base64EncodedImage, userId)
         .then(({ data }) => {
-          console.log(data);
           dispatch(mainUserAction.updateAvatar(data));
         });
     };
@@ -97,7 +96,6 @@ export const mainUserApiAction = {
     return (dispatch) => {
       userRequest.addNotification(userId, notify).then(({ data }) => {
         dispatch(mainUserAction.getNotification(data));
-        console.log(data);
       });
     };
   },

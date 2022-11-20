@@ -18,7 +18,6 @@ function App() {
 
   useEffect(() => {
     socket.on("get-comment", (comment, postId) => {
-      console.log("asdsa");
       dispatch(postAction.commentPost({ ...comment, postId }));
     });
 

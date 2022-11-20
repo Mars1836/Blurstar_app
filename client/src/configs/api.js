@@ -1,4 +1,4 @@
 const api = {
-  orgin: "https://blurstar.herokuapp.com",
+  orgin: window.location.origin,
 };
 export default api;
