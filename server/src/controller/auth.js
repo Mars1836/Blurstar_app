@@ -18,7 +18,7 @@ const auth = {
             { id: user._id },
             process.env.TOKEN_SECRET_KEY,
             {
-              expiresIn: "3h",
+              expiresIn: "24h",
             }
           );
           const refreshToken = jwt.sign(
@@ -52,7 +52,7 @@ const auth = {
     if (authorization) {
       try {
         user = jwt.verify(authorization, process.env.TOKEN_SECRET_KEY);
-        res.json({ user });
+        res.status(200).json({ user });
       } catch (err) {
         res.status(400).json(err);
       }

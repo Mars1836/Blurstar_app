@@ -250,7 +250,7 @@ function Post({ postid, status }) {
         {isCommentMount && (
           <div className={cx("comment-site")}>
             <CommentInput
-              post={true}
+              isReply={false}
               ref={inputComment}
               postId={postid}
             ></CommentInput>

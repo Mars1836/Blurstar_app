@@ -16,7 +16,7 @@ function Interaction({
   handleCommentMount,
 }) {
   const dispatch = useDispatch();
-  const userId = useSelector((state) => state.mainUser.data._id);
+  const userId = useSelector((state) => state.mainUser.data?._id);
   const likes = useSelector((state) => state.posts.byId[postId].likes) || [];
   const authorPost =
     useSelector((state) => state.posts.byId[postId].author) || [];

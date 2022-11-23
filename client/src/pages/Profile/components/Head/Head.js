@@ -163,7 +163,7 @@ const Head = ({ author, isAuthor }) => {
           )}
 
           {!isMobile && (
-            <div className={cx("parameter")}>
+            <div className={cx("numberal")}>
               <div className={cx("item")}>
                 <span>{author?.posts?.length}</span>
                 <span>posts</span>
@@ -208,6 +208,48 @@ const Head = ({ author, isAuthor }) => {
           <div className={cx("bio")}>{author?.bio}</div>
         </div>
       </div>
+      {isMobile && (
+        <div className={cx("numberal-mobile")}>
+          <div className={cx("item")}>
+            <span>{author?.posts?.length}</span>
+            <span>posts</span>
+          </div>
+          <Button
+            dialog={
+              <LikeModel
+                listUsers={followersData}
+                title="Followers"
+              ></LikeModel>
+            }
+            className={cx("item")}
+            onClick={() => {
+              userRequest.getUsersByListsId(followers).then(({ data }) => {
+                setFollowersData(data);
+              });
+            }}
+          >
+            <span>{followers?.length}</span>
+            <span>followers</span>
+          </Button>
+          <Button
+            dialog={
+              <LikeModel
+                listUsers={followingData}
+                title="Following"
+              ></LikeModel>
+            }
+            className={cx("item")}
+            onClick={() => {
+              userRequest.getUsersByListsId(following).then(({ data }) => {
+                setFollowingData(data);
+              });
+            }}
+          >
+            <span>{following?.length}</span>
+            <span>following</span>
+          </Button>
+        </div>
+      )}
       <div className={cx("tab")}>
         <div className={cx("posts")}></div>
         <div className={cx("about")}></div>

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+console.log(2);
 const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
@@ -15,7 +16,7 @@ const userSchema = new mongoose.Schema(
     phone: { type: String, default: "" },
     notifications: [
       {
-        id: { type: String, unique: true },
+        id: { type: String },
         userId: { type: mongoose.Types.ObjectId, required: true },
         postId: { type: mongoose.Types.ObjectId },
         commentId: { type: mongoose.Types.ObjectId },

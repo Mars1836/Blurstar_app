@@ -8,9 +8,11 @@ import userRequest from "~/httprequest/user";
 import Post from "../Home/Component/Post";
 import LoadingComment from "~/components/Loading/LoadingComment";
 import Sidebar from "~/layouts/SidebarRight/Sidebar";
+import useBreakpoint from "~/hooks/useBreakpoint";
 import { useDispatch, useSelector } from "react-redux";
 const cx = classnames.bind(styles);
 function Profile() {
+  const { isMobile } = useBreakpoint();
   const location = useLocation();
   const user_path = location.pathname.split("/")[2];
   const isAuthor = useSelector(
@@ -32,7 +34,9 @@ function Profile() {
         console.log(err);
       });
   }, [location]);
-
+  useEffect(() => {
+    console.log(isMobile);
+  }, [isMobile]);
   return (
     <>
       {isAuthor !== null ? (
@@ -42,7 +46,7 @@ function Profile() {
             <div className={cx("post-contain")}>
               <div className={cx("tab")}>
                 <div className={cx("line")}></div>
-                <div className={cx("content")}>
+                <div className={cx("content", { mobile: isMobile })}>
                   <span
                     className={cx("tab-btn")}
                     style={

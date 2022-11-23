@@ -34,6 +34,7 @@ const postReducer = produce((state = initState, action) => {
         };
       }, state.byId);
       state.byId = byId;
+      break;
     case postType.getPostError:
       state.error = action.payload;
       state.loading = false;
@@ -95,8 +96,6 @@ const postReducer = produce((state = initState, action) => {
     case postType.removeReplyComment:
       {
         const { postId, commentId } = action.payload;
-        console.log("asddddddddasjdjjjas");
-        console.log({ postId, commentId });
       }
       break;
     case postType.unlikePost:

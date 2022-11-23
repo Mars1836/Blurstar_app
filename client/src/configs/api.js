@@ -1,4 +1,4 @@
 const api = {
-  orgin: window.location.origin,
+  orgin: "http://localhost:4000",
 };
 export default api;

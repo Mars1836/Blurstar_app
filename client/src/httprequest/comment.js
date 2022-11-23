@@ -22,17 +22,17 @@ const commentRequest = {
     });
     return comments;
   },
-  addComment: async (commentId, newComment, to) => {
+  addComment: async (commentId, newComment, to, postId) => {
     const comment = await instance.post(`${apiRoute.addComment + commentId}`, {
       userid: newComment.userid,
       content: newComment.content,
     });
     socket.emit("reply", comment.data, commentId);
-    // socket.emit("notification", to, {
-    //   type: notifications.likePost,
-    //   postId,
-    //   userId,
-    // });
+    socket.emit("notification", to, {
+      type: notifications.replyComment,
+      postId: postId,
+      userId: newComment.userid,
+    });
     return comment;
   },
   removeComment: async (commentId, postId, commentParentId) => {

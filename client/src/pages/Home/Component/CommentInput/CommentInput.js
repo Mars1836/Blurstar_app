@@ -10,12 +10,15 @@ import { useDispatch } from "react-redux";
 
 const cx = classNames.bind(styles);
 
-const CommentInput = React.forwardRef(({ post, comment, postId }, ref) => {
+const CommentInput = React.forwardRef(({ comment, postId, isReply }, ref) => {
+  const dispatch = useDispatch();
   const userid = useSelector((state) => state.mainUser.data?._id);
   const userUsername = useSelector((state) => state.mainUser.data?.username);
   const userAvatar = useSelector((state) => state.mainUser.data?.avatar);
+  const _post = useSelector((state) => state.posts.byId[postId]);
+
   const authorPost = useSelector((state) => state.posts.byId[postId]?.author);
-  const dispatch = useDispatch();
+
   let keyPress = [];
   const handleFocus = () => {
     keyPress = [];
@@ -41,14 +44,15 @@ const CommentInput = React.forwardRef(({ post, comment, postId }, ref) => {
         userid: userid,
         content: cmt,
       };
-      if (post) {
+      if (!isReply) {
         dispatch(
           postApiAction.fetchCommentPost(newComment, postId, authorPost)
         );
       }
-      if (comment) {
+      if (isReply) {
+        console.log(comment.userid);
         commentRequest
-          .addComment(comment._id, newComment)
+          .addComment(comment._id, newComment, comment.userid, postId)
           .then(() => {})
           .catch((err) => {
             console.log(err);

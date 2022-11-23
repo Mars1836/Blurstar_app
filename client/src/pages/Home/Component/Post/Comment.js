@@ -215,7 +215,12 @@ function Comment({
                     borderBottom: "2px solid #F0F2F5",
                   }}
                 ></div>
-                <CommentInput comment={data} ref={inputComment}></CommentInput>
+                <CommentInput
+                  comment={data}
+                  isReply={true}
+                  ref={inputComment}
+                  postId={postId}
+                ></CommentInput>
               </div>
             </div>
           )}

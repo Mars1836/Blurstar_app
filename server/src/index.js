@@ -27,7 +27,7 @@ const corsOption = {
   origin: "http://localhost:3000",
   optionsSuccessStatus: 200,
 };
-
+console.log("change");
 conn.connect();
 app.use(cors(corsOption));
 app.use(express.json({ extended: true, limit: "10mb" }));
@@ -55,6 +55,7 @@ io.on("connection", (socket) => {
     io.sockets.emit("sv-click");
   });
   socket.on("notification", (to, data) => {
+    console.log(to, data);
     socket.to(to).emit("get-notification", data);
   });
   socket.on("up-post", (post) => {

@@ -72,52 +72,56 @@ const Search = () => {
   return (
     <>
       <div className={cx("search-form")}>
-        <TippyHeadless
-          placement="bottom-start"
-          render={(attrs) => (
-            <div className={cx("wrapper")} tabIndex="-1" {...attrs}>
-              {userList.map((user) => {
-                return (
-                  <Button
-                    className={cx("item")}
-                    to={`/profile/${user.username}`}
-                    key={user._id}
-                    onClick={() => {
-                      setInputFocus(false);
-                    }}
-                  >
-                    <Avatar
-                      username={user.name}
-                      url={user.avatar}
-                      size={35}
-                      link={false}
-                    ></Avatar>
+        <div className={cx("tippy")}>
+          <TippyHeadless
+            placement="bottom-start"
+            render={(attrs) => (
+              <div className={cx("wrapper")} tabIndex="-1" {...attrs}>
+                {userList.map((user) => {
+                  return (
+                    <Button
+                      className={cx("item")}
+                      to={`/profile/${user.username}`}
+                      key={user._id}
+                      onClick={() => {
+                        setInputFocus(false);
+                      }}
+                    >
+                      <div className={cx("contain")}>
+                        <Avatar
+                          username={user.name}
+                          url={user.avatar}
+                          size={35}
+                          link={false}
+                        ></Avatar>
 
-                    <span className={cx("item-text")}>
-                      <p className={cx("username")}> {user.username}</p>
-                      <p className={cx("name")}>{user.name}</p>
-                    </span>
-                  </Button>
-                );
-              })}
-            </div>
-          )}
-          interactive={true}
-          visible={userList && inputFocus}
-          onClickOutside={() => {
-            setInputFocus(false);
-          }}
-        >
-          <input
-            className={cx("search-input")}
-            ref={input}
-            placeholder="Search"
-            onFocus={handleFocusInput}
-            onBlur={handleBlurInput}
-            onChange={handleValueInput}
-            value={searchValue}
-          ></input>
-        </TippyHeadless>
+                        <span className={cx("item-text")}>
+                          <p className={cx("username")}>{user.username}</p>
+                          <p className={cx("name")}>{user.name}</p>
+                        </span>
+                      </div>
+                    </Button>
+                  );
+                })}
+              </div>
+            )}
+            interactive={true}
+            visible={userList && inputFocus}
+            onClickOutside={() => {
+              setInputFocus(false);
+            }}
+          >
+            <input
+              className={cx("search-input")}
+              ref={input}
+              placeholder="Search"
+              onFocus={handleFocusInput}
+              onBlur={handleBlurInput}
+              onChange={handleValueInput}
+              value={searchValue}
+            ></input>
+          </TippyHeadless>
+        </div>
         {placeholder && (
           <div
             className={cx("search-placeholder")}

@@ -19,6 +19,7 @@ const userController = {
       const isUsernameExist = await User.findOne({
         username: newUser.username,
       });
+      console.log("ahahha");
       if (isEmailExist) {
         res.status(409).json("Your email was exist");
         return;
@@ -32,9 +33,11 @@ const userController = {
         process.env.PW_SECRET_KEY
       ).toString();
       const saveUser = new User(newUser);
+
       await saveUser.save(function (err) {
+        console.log(1);
         if (err) {
-          res.json(err);
+          res.status(500).json(err);
           return;
         }
         res.status(200).json(newUser);
@@ -198,7 +201,7 @@ const userController = {
         { _id: id },
         {
           $push: {
-            notifications: { $each: [notification], $slice: -15, $position: 0 },
+            notifications: { $each: [notification], $slice: 15, $position: 0 },
           },
         }
       );
