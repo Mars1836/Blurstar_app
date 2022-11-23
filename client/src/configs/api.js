@@ -1,4 +1,4 @@
 const api = {
-  orgin: window.location.hostname,
+  orgin: window.location.origin,
 };
 export default api;
